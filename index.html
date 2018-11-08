@@ -31,7 +31,6 @@
 			overflow: hidden;
 		}
 
-
 		#blinds {
 			font-family:"Courier New";
 			text-align: center;
@@ -401,7 +400,9 @@
 	  function deleteIslands(){
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name == name) {
-					console.log(arWorldRoot.remove(arWorldRoot.children[i]));
+					var toRemove = scene.getObjectByName(arWorldRoot.children[i].name);
+					arWorldRoot.remove( toRemove );
+					animate();
 	      }
 	    }
 		}
