@@ -26,7 +26,11 @@
 		html,
 		body {
 			margin: 0;
+			width:100%;
+			height:100%;
+			overflow: hidden;
 		}
+
 
 		#blinds {
 			font-family:"Courier New";
@@ -34,6 +38,8 @@
 			font-size:64px;
 			color:white
 		}
+
+
 
 		#blinds:before {
 			content: "";
@@ -46,6 +52,9 @@
 </head>
 
 <body>
+
+	<button type="submit" id="deleteButton" onclick="deleteIslands();">Gabes Button</button>
+
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%">
 		Find the Marker
 	</div>
@@ -115,9 +124,9 @@
 		//	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 		renderer.setPixelRatio(4);
 		renderer.setSize(window.innerWidth, window.innerHeight);
-		renderer.domElement.style.position = 'absolute'
-		renderer.domElement.style.top = '0px'
-		renderer.domElement.style.left = '0px'
+		renderer.domElement.style.position = 'absolute';
+		renderer.domElement.style.top = '0px';
+		renderer.domElement.style.left = '0px';
 		renderer.shadowMapEnabled = true;
 		renderer.shadowMapSoft = true;
 
@@ -192,7 +201,7 @@
 		scene.add(markerRoot)
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
-			patternUrl: './assets/patt.gp'
+			patternUrl: './assets/patt.hiro'
 		})
 
 		// build a smoothedControls
@@ -387,6 +396,16 @@
 			);
 			//console.log(pointLight.position);
 		})
+
+    //Island Deleter
+	  function deleteIslands(){
+			for (var i = 0; i < arWorldRoot.children.length; i++) {
+				if (arWorldRoot.children[i].name == name) {
+					console.log(arWorldRoot.remove(arWorldRoot.children[i]));
+	      }
+	    }
+		}
+
 
 		function model(name) {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
