@@ -1,0 +1,5 @@
+{
+  "plugins": [
+    "eslint-plugin-html"
+  ]
+}
