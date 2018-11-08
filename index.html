@@ -29,6 +29,7 @@
 </head>
 
 <body>
+	<button type="submit" id="deleteButton" onclick="deleteIslands();">Gabes Button</button>
 	<script>
 		//////////////////////////////////////////////////////////////////////////////////
 		//		Init
@@ -172,7 +173,7 @@
 		scene.add(markerRoot)
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
-			patternUrl: './assets/patt.gp'
+			patternUrl: './assets/patt.hiro'
 		})
 
 		// build a smoothedControls
@@ -400,6 +401,16 @@
 			);
 			//console.log(pointLight.position);
 		})
+
+    //Island Deleter
+	  function deleteIslands(){
+			for (var i = 0; i < arWorldRoot.children.length; i++) {
+				if (arWorldRoot.children[i].name == name) {
+					console.log(arWorldRoot.remove(arWorldRoot.children[i]));
+	      }
+	    }
+		}
+
 		function model(name) {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name == name) {
