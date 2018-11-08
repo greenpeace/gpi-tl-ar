@@ -3,8 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>AR</title>
-
+	<title>AR - fur shur</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<script
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -250,46 +249,7 @@
 			loadIsland(mtlLoader, "./assets/islands/", island)
 		})
 
-		/*
-		var mtlLoader = new THREE.MTLLoader();
-		mtlLoader.setTexturePath('./assets/');
-		mtlLoader.setPath('./assets/');
-		mtlLoader.load('island_forest.mtl', function(materials) {
-			materials.preload();
-			var objLoader = new THREE.OBJLoader();
-			objLoader.setMaterials(materials);
-			objLoader.setPath('./assets/');
-			objLoader.load('island_forest.obj', function(object) {
-				console.log(object);
-				object.traverse(function(node) {
-					if (node instanceof THREE.Mesh) {
-						node.geometry.computeVertexNormals();
-					}
-				});
-				//				object.transparency.set(true);
-				//				obeject.opacity.set(true);
-				object.scale.set(0.1, 0.1, 0.1);
-				object.position.set(-1.5, -0.1, -1.5);
-				object.name = 'island_forest';
-				arWorldRoot.add(object);
 
-				island_forest0 = object.clone();
-				island_forest0.position.set(1.5, -0.1, 0);
-				island_forest0.name = 'island_forest0';
-				arWorldRoot.add(island_forest0);
-
-				island_forest1 = object.clone();
-				island_forest1.position.set(-.5, -0.1, 1.5);
-				island_forest1.name = 'island_forest1';
-				arWorldRoot.add(island_forest1);
-
-				island_forest2 = object.clone();
-				island_forest2.position.set(-.5, 2.0, 1.5);
-				island_forest2.name = 'island_forest2';
-				arWorldRoot.add(island_forest2);
-			});
-		});
-		*/
 		//////////////////////////////////////////////////////////////////////////////////
 		//		render the whole thing on the page
 		//////////////////////////////////////////////////////////////////////////////////
