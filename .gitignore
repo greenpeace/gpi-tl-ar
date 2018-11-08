@@ -1,8 +1,0 @@
-.ftpconfig
-.ftpconfig.cson
-.gitignore
-.ftpignore
-id_rsa
-.DS_Store
-.git
-gitall.sh
