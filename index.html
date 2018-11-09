@@ -200,7 +200,7 @@
 		scene.add(markerRoot)
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
-			patternUrl: './assets/patt.gp'
+			patternUrl: './assets/patt.hiro'
 		})
 
 		// build a smoothedControls
@@ -399,10 +399,10 @@
     //Island Deleter
 	  function deleteIslands(){
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
-				if (arWorldRoot.children[i].name == name) {
-					var toRemove = scene.getObjectByName(arWorldRoot.children[i].name);
+				if (arWorldRoot.children[i].name) {
+					var toRemove = model(arWorldRoot.children[i].name);
 					arWorldRoot.remove( toRemove );
-					animate();
+					// animate();
 	      }
 	    }
 		}
