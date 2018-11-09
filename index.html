@@ -30,16 +30,12 @@
 			height:100%;
 			overflow: hidden;
 		}
-
 		#blinds {
 			font-family:"Courier New";
 			text-align: center;
-			font-size:64px;
+			font-size:6vw;
 			color:white
 		}
-
-
-
 		#blinds:before {
 			content: "";
 			display: inline-block;
@@ -53,7 +49,6 @@
 <body>
 
 	<button type="submit" id="deleteButton" onclick="deleteIslands();">Gabes Button</button>
-
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%">
 		Find the Marker
 	</div>
@@ -62,14 +57,8 @@
 		//		Init
 		//////////////////////////////////////////////////////////////////////////////////
 
-		var ssaoPass;
 		var date;
 		var orbitRadius = 5;
-		var island_forest0, island_forest1, island_forest2;
-		var island_forest_direction = 1;
-		var island_forest0_direction = 1;
-		var island_forest1_direction = 1;
-		var island_forest2_direction = 1;
 
 		let islands = {
 			"island_forest": {
@@ -86,11 +75,6 @@
 			}
 		}
 
-		init();
-
-		function init() {
-
-		}
 		// array of functions for the rendering loop
 		var onRenderFcts = [];
 
@@ -118,9 +102,8 @@
 		var renderer = new THREE.WebGLRenderer({
 			antialias: true,
 			alpha: true
-			//		logarithmicDepthBuffer: true,
 		});
-		//	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+
 		renderer.setPixelRatio(4);
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		renderer.domElement.style.position = 'absolute';
@@ -187,7 +170,6 @@
 		// update artoolkit on every frame
 		onRenderFcts.push(function() {
 			if (arToolkitSource.ready === false) return
-
 			arToolkitContext.update(arToolkitSource.domElement)
 		})
 
@@ -200,7 +182,7 @@
 		scene.add(markerRoot)
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
-			patternUrl: './assets/patt.hiro'
+			patternUrl: './assets/patt.gp'
 		})
 
 		// build a smoothedControls
@@ -219,15 +201,8 @@
 		//////////////////////////////////////////////////////////////////////////////////
 
 		var arWorldRoot = smoothedRoot;
-		// model
-		/*var loader0 = new THREE.ColladaLoader();
-		loader0.load('./assets/island_forest.dae', function(collada) {
-			island_forest0 = collada.scene;
-			island_forest0.scale.set(0.1, 0.1, 0.1);
-			island_forest0.position.set(-0.7, 0, -0.7);
-			island_forest0.castShadow = true;
-			arWorldRoot.add(island_forest0);
-		});*/
+		arWorldRoot.name = "arWorldRoot" // makes finding it easier
+
 		var geometry = new THREE.SphereGeometry(0.3, 32, 32);
 		var material = new THREE.MeshBasicMaterial({
 			color: 0xffff00
@@ -283,10 +258,7 @@
 
 		// render the scene
 		onRenderFcts.push(function() {
-			//		renderer.compile( scene, camera );
 			renderer.render(scene, camera);
-			//		renderer.clearDepth();
-			//		renderer.clearStencil();
 		})
 
 		// object foo
@@ -303,7 +275,7 @@
 			requestAnimationFrame(animate);
 			// lift or lower blinds based on whether marker is visible or not.
 			if (markerRoot.visible) {
-				$("#blinds").fadeOut()
+				$("#blinds").fadeOut(100)
 			} else {
 				$("#blinds").fadeIn()
 			}
@@ -317,7 +289,16 @@
 			})
 
 			// iterate over all available islands
-			Object.keys(islands).forEach(island => {
+			let availableIslands = []
+			// push all available islands to array
+			scene.getObjectByName(arWorldRoot.name).children.forEach(obj => {
+				if (obj.name !== "") {
+					availableIslands.push(obj.name)
+				}
+			})
+
+			// actual iteration
+			availableIslands.forEach(island => {
 				let islandModel = model(island)
 				let dir = 1 // short direction variable name for convenience
 				// switch-case:
@@ -357,31 +338,11 @@
 							islandModel.position.y + 0.003 * dir,
 							islandModel.position.z)
 						break;
+
+					default:
+						console.log(`entered default case for variable ${island}.`)
 				}
 			})
-
-			/*
-			if (model('island_forest').position.y < 0) {
-				island_forest_direction = 1;
-			} else if (model('island_forest').position.y > 0.4) {
-				island_forest_direction = -1;
-			}
-			model('island_forest').position.set(model('island_forest').position.x, model('island_forest').position.y + .001 * island_forest_direction, model('island_forest').position.z);
-
-			if (model('island_forest0').position.y < 0) {
-				island_forest_direction0 = 1;
-			} else if (model('island_forest0').position.y > 0.2) {
-				island_forest_direction0 = -1;
-			}
-			model('island_forest0').position.set(model('island_forest0').position.x, model('island_forest0').position.y + .002 * island_forest_direction, model('island_forest0').position.z);
-
-			if (model('island_forest1').position.y < 0) {
-				island_forest_direction1 = 1;
-			} else if (model('island_forest1').position.y > 0.6) {
-				island_forest_direction1 = -1;
-			}
-			model('island_forest1').position.set(model('island_forest1').position.x, model('island_forest1').position.y + .003 * island_forest_direction, model('island_forest1').position.z);
-			*/
 			date = Date.now() * 0.0002;
 			pointLight.position.set(
 				Math.cos(date) * orbitRadius,
@@ -396,8 +357,11 @@
 			//console.log(pointLight.position);
 		})
 
-    //Island Deleter
-	  function deleteIslands(){
+		function animate() {
+			console.log("placeholder function cause gabe forgot")
+		}
+		//Island Deleter
+		function deleteIslands() {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name) {
 					var toRemove = model(arWorldRoot.children[i].name);
@@ -407,6 +371,17 @@
 	    }
 		}
 
+		function setGrassGreenness(greenness) {
+			model("island_forest").children[0].material.color.r = 1 - greenness;
+			model("island_forest").children[0].material.color.g = greenness * .7 + 0.3;
+		}
+
+		function setWaterClarity(clarity) {
+			model("island_forest").children[0].material.color.r = 0;
+			model("island_forest").children[0].material.color.g = clarity * 0.2;
+			model("island_forest").children[0].material.color.b = clarity;
+			model("island_forest").children[0].material.opacity = 1 - clarity * .3;
+		}
 
 		function model(name) {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
