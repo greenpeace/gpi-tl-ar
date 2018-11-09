@@ -363,12 +363,12 @@
 		//Island Deleter
 		function deleteIslands() {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
-				if (arWorldRoot.children[i].name == name) {
-					var toRemove = scene.getObjectByName(arWorldRoot.children[i].name);
-					arWorldRoot.remove(toRemove);
-					animate();
-				}
-			}
+				if (arWorldRoot.children[i].name) {
+					var toRemove = model(arWorldRoot.children[i].name);
+					arWorldRoot.remove( toRemove );
+					// animate();
+	      }
+	    }
 		}
 
 		function setGrassGreenness(greenness) {
