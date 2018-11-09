@@ -205,6 +205,7 @@
 		//////////////////////////////////////////////////////////////////////////////////
 
 		var arWorldRoot = smoothedRoot;
+		arWorldRoot.name = "arWorldRoot" // makes finding it easier
 
 		var geometry = new THREE.SphereGeometry(0.3, 32, 32);
 		var material = new THREE.MeshBasicMaterial({
@@ -292,7 +293,16 @@
 			})
 
 			// iterate over all available islands
-			Object.keys(islands).forEach(island => {
+			let availableIslands = []
+			// push all available islands to array
+			scene.getObjectByName(arWorldRoot.name).children.forEach(obj => {
+				if (obj.name !== "") {
+					availableIslands.push(obj.name)
+				}
+			})
+
+			// actual iteration
+			availableIslands.forEach(island => {
 				let islandModel = model(island)
 				let dir = 1 // short direction variable name for convenience
 				// switch-case:
@@ -332,6 +342,9 @@
 							islandModel.position.y + 0.003 * dir,
 							islandModel.position.z)
 						break;
+
+					default:
+						console.log(`entered default case for variable ${island}.`)
 				}
 			})
 			date = Date.now() * 0.0002;
