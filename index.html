@@ -65,7 +65,7 @@
 		var trees = {
 			"tree_little_cone": {
 				parent:"island_forest",
-			 	scale: [0.1, 0.1, 0.1]
+			 	scale: [0.01, 0.01, 0.01]
 			}
 		}
 
@@ -254,7 +254,12 @@
 				})
 			})
 		}
-
+		function loadTreesOnForestIsland(assetDirectory, treesHolder, nr){
+			var loadedTrees = [];
+			Object.keys(trees).forEach(tree => {
+				console.log(tree);
+			})
+		}
 		function loadAssets(assetDirectory, assetName) {
 			/* something like a docstring
 					assetName 					Name of the Asset to load
@@ -295,11 +300,11 @@
 		})
 
 		// iterate over all trees
-		Object.keys(trees).forEach(tree => {
-			for (var i = 0; i < 50; i++) {
-				loadAssets("./assets/trees/", tree)
-			}
-		})
+		// Object.keys(trees).forEach(tree => {
+		// 	for (var i = 0; i < 50; i++) {
+		// 		loadAssets("./assets/trees/", tree)
+		// 	}
+		// })
 
 
 		//////////////////////////////////////////////////////////////////////////////////
@@ -397,7 +402,7 @@
 						break;
 
 					default:
-						console.log(`entered default case for variable ${island}.`)
+						//console.log(`entered default case for variable ${island}.`)
 				}
 			})
 			date = Date.now() * 0.0002;
