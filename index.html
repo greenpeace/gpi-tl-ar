@@ -30,16 +30,12 @@
 			height:100%;
 			overflow: hidden;
 		}
-
 		#blinds {
 			font-family:"Courier New";
 			text-align: center;
-			font-size:64px;
+			font-size:6vw;
 			color:white
 		}
-
-
-
 		#blinds:before {
 			content: "";
 			display: inline-block;
@@ -278,7 +274,7 @@
 			requestAnimationFrame(animate);
 			// lift or lower blinds based on whether marker is visible or not.
 			if (markerRoot.visible) {
-				$("#blinds").fadeOut()
+				$("#blinds").fadeOut(100)
 			} else {
 				$("#blinds").fadeIn()
 			}
@@ -347,20 +343,32 @@
 			);
 			//console.log(pointLight.position);
 		})
-		function animate(){
+
+		function animate() {
 			console.log("placeholder function cause gabe forgot")
 		}
-    //Island Deleter
-	  function deleteIslands(){
+		//Island Deleter
+		function deleteIslands() {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name == name) {
 					var toRemove = scene.getObjectByName(arWorldRoot.children[i].name);
-					arWorldRoot.remove( toRemove );
+					arWorldRoot.remove(toRemove);
 					animate();
-	      }
-	    }
+				}
+			}
 		}
 
+		function setGrassGreenness(greenness) {
+			model("island_forest").children[0].material.color.r = 1 - greenness;
+			model("island_forest").children[0].material.color.g = greenness * .7 + 0.3;
+		}
+
+		function setWaterClarity(clarity) {
+			model("island_forest").children[0].material.color.r = 0;
+			model("island_forest").children[0].material.color.g = clarity * 0.2;
+			model("island_forest").children[0].material.color.b = clarity;
+			model("island_forest").children[0].material.opacity = 1 - clarity * .3;
+		}
 
 		function model(name) {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
