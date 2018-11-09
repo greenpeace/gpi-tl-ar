@@ -57,14 +57,8 @@
 		//		Init
 		//////////////////////////////////////////////////////////////////////////////////
 
-		var ssaoPass;
 		var date;
 		var orbitRadius = 5;
-		var island_forest0, island_forest1, island_forest2;
-		var island_forest_direction = 1;
-		var island_forest0_direction = 1;
-		var island_forest1_direction = 1;
-		var island_forest2_direction = 1;
 
 		let islands = {
 			"island_forest": {
@@ -81,11 +75,6 @@
 			}
 		}
 
-		init();
-
-		function init() {
-
-		}
 		// array of functions for the rendering loop
 		var onRenderFcts = [];
 
@@ -113,9 +102,8 @@
 		var renderer = new THREE.WebGLRenderer({
 			antialias: true,
 			alpha: true
-			//		logarithmicDepthBuffer: true,
 		});
-		//	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+
 		renderer.setPixelRatio(4);
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		renderer.domElement.style.position = 'absolute';
@@ -182,7 +170,6 @@
 		// update artoolkit on every frame
 		onRenderFcts.push(function() {
 			if (arToolkitSource.ready === false) return
-
 			arToolkitContext.update(arToolkitSource.domElement)
 		})
 
