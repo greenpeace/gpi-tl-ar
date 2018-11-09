@@ -365,9 +365,9 @@
 							islandModel.position.z)
 							for (var i = 0; i < arWorldRoot.children.length; i++) {
 								if(arWorldRoot.children[i].name=="tree_little_cone"){
-									arWorldRoot.children[i].position.set(islandModel.position.x,
+									arWorldRoot.children[i].position.set(arWorldRoot.children[i].position.x,
 										islandModel.position.y + 0.001 * dir,
-										islandModel.position.z)
+										arWorldRoot.children[i].position.z)
 								}
 							}
 						break;
