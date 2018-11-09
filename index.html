@@ -219,15 +219,7 @@
 		//////////////////////////////////////////////////////////////////////////////////
 
 		var arWorldRoot = smoothedRoot;
-		// model
-		/*var loader0 = new THREE.ColladaLoader();
-		loader0.load('./assets/island_forest.dae', function(collada) {
-			island_forest0 = collada.scene;
-			island_forest0.scale.set(0.1, 0.1, 0.1);
-			island_forest0.position.set(-0.7, 0, -0.7);
-			island_forest0.castShadow = true;
-			arWorldRoot.add(island_forest0);
-		});*/
+
 		var geometry = new THREE.SphereGeometry(0.3, 32, 32);
 		var material = new THREE.MeshBasicMaterial({
 			color: 0xffff00
@@ -283,10 +275,7 @@
 
 		// render the scene
 		onRenderFcts.push(function() {
-			//		renderer.compile( scene, camera );
 			renderer.render(scene, camera);
-			//		renderer.clearDepth();
-			//		renderer.clearStencil();
 		})
 
 		// object foo
@@ -359,29 +348,6 @@
 						break;
 				}
 			})
-
-			/*
-			if (model('island_forest').position.y < 0) {
-				island_forest_direction = 1;
-			} else if (model('island_forest').position.y > 0.4) {
-				island_forest_direction = -1;
-			}
-			model('island_forest').position.set(model('island_forest').position.x, model('island_forest').position.y + .001 * island_forest_direction, model('island_forest').position.z);
-
-			if (model('island_forest0').position.y < 0) {
-				island_forest_direction0 = 1;
-			} else if (model('island_forest0').position.y > 0.2) {
-				island_forest_direction0 = -1;
-			}
-			model('island_forest0').position.set(model('island_forest0').position.x, model('island_forest0').position.y + .002 * island_forest_direction, model('island_forest0').position.z);
-
-			if (model('island_forest1').position.y < 0) {
-				island_forest_direction1 = 1;
-			} else if (model('island_forest1').position.y > 0.6) {
-				island_forest_direction1 = -1;
-			}
-			model('island_forest1').position.set(model('island_forest1').position.x, model('island_forest1').position.y + .003 * island_forest_direction, model('island_forest1').position.z);
-			*/
 			date = Date.now() * 0.0002;
 			pointLight.position.set(
 				Math.cos(date) * orbitRadius,
