@@ -19,6 +19,7 @@
 	<script src="./js/MTLLoader.js"></script>
 	<script src="./js/ColladaLoader.js"></script>
 	<script src="./js/ar.js"></script>
+	<script src="https://unpkg.com/merge-images"></script>
 	<script>
 		THREEx.ArToolkitContext.baseURL = './'
 	</script>
@@ -360,10 +361,15 @@
 			);
 			//console.log(pointLight.position);
 		})
+
+		///////////////////////////////////////////////////////////////////////////
+		// 										 	CUSTOM FUNCTIONS 																 //
+		///////////////////////////////////////////////////////////////////////////
 		function animate(){
 			console.log("placeholder function cause gabe forgot")
 		}
     //Island Deleter
+		//NOTE: does this need 'name' as a parameter? 
 	  function deleteIslands(){
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name == name) {
