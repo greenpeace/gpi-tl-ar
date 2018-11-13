@@ -551,18 +551,28 @@
       return { blob: blob, dataUri: dataUri, format: format, width: canvas.width, height: canvas.height }
     }
 
+		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-404543089
 		function resizeCanvas(origCanvas, width, height) {
-			let resizedCanvas = document.createElement("canvas");
-			let resizedContext = resizedCanvas.getContext("2d");
+        let resizedCanvas = document.createElement("canvas");
+        let resizedContext = resizedCanvas.getContext("2d");
 
-			resizedCanvas.height = height;
-			resizedCanvas.width = width;
+        resizedCanvas.height = height;
+        resizedCanvas.width = width;
 
-			resizedContext.drawImage(origCanvas, 0, 0, width, height);
+        if (width > height) {
+            // Landscape
+            resizedContext.drawImage(origCanvas, 0, 0, width, height);
+        } else {
+            // Portrait
+            var scale = height / width;
+            var scaledHeight = origCanvas.width * scale;
+            var scaledWidth = origCanvas.height * scale;
+            var marginLeft = ( origCanvas.width - scaledWidth) / 2;
+            resizedContext.drawImage(origCanvas, marginLeft, 0, scaledWidth, scaledHeight);
+        }
 
-
-			return resizedCanvas.toDataURL();
-		}
+        return resizedCanvas.toDataURL();
+    }
 
 	</script>
 </body>
