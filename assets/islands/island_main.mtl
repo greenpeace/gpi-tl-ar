@@ -21,7 +21,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl Rock_Lower.001
+newmtl Rock_Upper
 Ns 94.117647
 Ka 0.000000 0.000000 0.000000
 Kd 0.799103 0.799103 0.799103
