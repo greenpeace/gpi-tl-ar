@@ -45,12 +45,15 @@
 			height: 75%;
 			vertical-align: middle;
 		}
+		canvas {
+			z-index: -1
+		}
 	</style>
 
 </head>
 
 <body>
-	<button type="submit" id="deleteButton" style="display: block; margin: 0 auto;" onclick="deleteIslands();"><< DELETER >></button>
+	<button type="submit" id="deleteButton" style="display: block; margin: 0 auto;z-index:10" onclick="deleteIslands();"><< DELETER >></button>
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%">
 		Find the Marker
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;"  src="./assets/gp.png" alt="">
@@ -64,9 +67,13 @@
 		var orbitRadius = 7;
 
 		var trees = {
-			"tree_little_cone": {
+			"beech_tree": {
 				parent:"island_forest",
-			 	scale: [0.01, 0.01, 0.01]
+			 	scale: [0.02, 0.02, 0.02]
+			},
+			"pine_tree": {
+				parent:"island_forest",
+				scale: [0.03, 0.065, 0.03]
 			}
 		}
 
@@ -301,11 +308,11 @@
 		})
 
 		// iterate over all trees
-		// Object.keys(trees).forEach(tree => {
-		// 	for (var i = 0; i < 50; i++) {
-		// 		loadAssets("./assets/trees/", tree)
-		// 	}
-		// })
+		Object.keys(trees).forEach(tree => {
+			for (var i = 0; i < 5; i++) {
+				loadAssets("./assets/trees/", tree)
+			}
+		})
 
 
 		//////////////////////////////////////////////////////////////////////////////////
@@ -370,7 +377,7 @@
 							islandModel.position.y + 0.001 * dir,
 							islandModel.position.z)
 							for (var i = 0; i < arWorldRoot.children.length; i++) {
-								if(arWorldRoot.children[i].name=="tree_little_cone"){
+								if(arWorldRoot.children[i].name.includes("tree")){
 									arWorldRoot.children[i].position.set(arWorldRoot.children[i].position.x,
 										islandModel.position.y + 0.001 * dir,
 										arWorldRoot.children[i].position.z)
