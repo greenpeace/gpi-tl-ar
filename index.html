@@ -30,31 +30,34 @@
 		html,
 		body {
 			margin: 0;
-			width:100%;
-			height:100%;
+			width: 100%;
+			height: 100%;
 			overflow: hidden;
 		}
+
 		#blinds {
-			font-family:"Courier New";
+			font-family: "Courier New";
 			text-align: center;
-			font-size:6vw;
-			color:white
+			font-size: 6vw;
+			color: white
 		}
+
 		#blinds:before {
 			content: "";
 			display: inline-block;
 			height: 75%;
 			vertical-align: middle;
 		}
+
 		canvas {
 			z-index: -1
 		}
+
 	</style>
 
 </head>
 
 <body>
-	<button type="submit" id="deleteButton" style="display: block; margin: 0 auto;z-index:10" onclick="deleteIslands();"><< DELETER >></button>
 
 	<!-- snappy stuff -->
 	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10" onclick="snappysnap()"> snappy sneks </button>
@@ -71,6 +74,7 @@
 			var date;
 			var orbitRadius = 7;
 			var treeposses = [];
+<<<<<<< HEAD
 			var treespacing = 1;
 			var trees = {
 				"beech_tree": {
@@ -80,11 +84,23 @@
 				"pine_tree": {
 					parent: "island_forest",
 					scale: [0.015, 0.0325, 0.015]
+=======
+			var treespacing = 0.8;
+			var trees = {
+				"beech_tree": {
+					parent: "island_forest",
+					scale: [0.02, 0.02, 0.02]
+				},
+				"pine_tree": {
+					parent: "island_forest",
+					scale: [0.03, 0.065, 0.03]
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 				}
 			}
 
 			let islands = {
 				"island_forest": {
+<<<<<<< HEAD
 					position: [-1.2, -0.1, -1.5],
 					scale: [0.2, 0.2, 0.2]
 				},
@@ -94,198 +110,126 @@
 				},
 				"island_lake": {
 					position: [-2, -0.1, 2.5],
+=======
+					position: [-1.2, 2, -1.5],
+					scale: [0.3, 0.2, 0.2]
+				},
+				"island_main": {
+					position: [1.2, 1.5, 1],
+					scale: [0.03, 0.03, 0.03]
+				},
+				"island_lake": {
+					position: [-2, 1.8, 2.5],
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 					scale: [0.03, 0.03, 0.03]
 				}
 			}
 
-		// array of functions for the rendering loop
-		var onRenderFcts = [];
+			// array of functions for the rendering loop
+			var onRenderFcts = [];
 
-		// init scene and camera
-		var scene = new THREE.Scene();
-
-
-		// called by snap-button, takes a screenshot of video and canvas
-		function snappysnap() {
-			// save frame from video, i.e. camera
-			let frame = captureVideoFrame("video", "png")
-			// save canvas object
-			let canvas = renderer.domElement // just object is needed
-
-			// resize canvas to match frame dimensions
-			canvas = resizeCanvas(canvas, frame.width, frame.height)
-			frame = frame.dataUri
-
-			// merge frame and canvas and download the resulting file
-			mergeImages([frame, canvas]).then(b64 => {
-				console.log("downloading screenshot")
-				download(b64, "AR.png", "image/png")
-			})
-		}
-
-		//////////////////////////////////////////////////////////////////////////////////
-		//		Initialize a basic camera + lights
-		//////////////////////////////////////////////////////////////////////////////////
-
-		// Create a camera
-		var camera = new THREE.PerspectiveCamera;
-		scene.add(camera);
-
-		// add lights to scene and dynamic camera based light
-		var ambientLight = new THREE.AmbientLight(0x212223, 6);
-		scene.add(ambientLight);
-		var pointLight = new THREE.DirectionalLight(0xffffff, 4);
-		pointLight.position.set(-.5, -12, 1.5)
-		pointLight.castShadow = true;
-		scene.add(pointLight);
-		scene.add(pointLight.target);
-
-		// init renderer
-		var renderer = new THREE.WebGLRenderer({
-			antialias: true,
-			alpha: true,
-			preserveDrawingBuffer: true  // needed for screenshots
-		});
-
-		renderer.setPixelRatio(4);
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		renderer.domElement.style.position = 'absolute';
-		renderer.domElement.style.top = '0px';
-		renderer.domElement.style.left = '0px';
-		renderer.shadowMapEnabled = true;
-		renderer.shadowMapSoft = true;
-
-		renderer.shadowCameraNear = 0.1;
-		renderer.shadowCameraFar = 9999999999999;
-		renderer.shadowCameraFov = 150;
-
-		renderer.shadowMapBias = 0.0039;
-		renderer.shadowMapDarkness = 0.2;
-		renderer.shadowMapWidth = 1024;
-		renderer.shadowMapHeight = 1024;
-		document.body.appendChild(renderer.domElement);
+			// init scene and camera
+			var scene = new THREE.Scene();
 
 
-		////////////////////////////////////////////////////////////////////////////////
-		//          handle arToolkitSource
-		////////////////////////////////////////////////////////////////////////////////
+			// called by snap-button, takes a screenshot of video and canvas
+			function snappysnap() {
+				// save frame from video, i.e. camera
+				let frame = captureVideoFrame("video", "png")
+				// save canvas object
+				let canvas = renderer.domElement // just object is needed
 
-		var arToolkitSource = new THREEx.ArToolkitSource({
-			// to read from the webcam
-			sourceType: 'webcam',
-		})
+				// resize canvas to match frame dimensions
+				canvas = resizeCanvas(canvas, frame.width, frame.height)
+				frame = frame.dataUri
 
-		arToolkitSource.init(function onReady() {
-			onResize()
-		})
-
-		// handle resize
-		window.addEventListener('resize', function() {
-			onResize()
-		})
-
-		function onResize() {
-			arToolkitSource.onResizeElement();
-			arToolkitSource.copyElementSizeTo(renderer.domElement)
-			if (arToolkitContext.arController !== null) {
-				arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
-			}
-		}
-		////////////////////////////////////////////////////////////////////////////////
-		//          initialize arToolkitContext
-		////////////////////////////////////////////////////////////////////////////////
-
-
-		// create atToolkitContext
-		var arToolkitContext = new THREEx.ArToolkitContext({
-			cameraParametersUrl: './assets/camera_para.dat',
-			detectionMode: 'mono',
-			maxDetectionRate: 60,
-			canvasWidth: 80 * 3,
-			canvasHeight: 60 * 3,
-		})
-		// initialize it
-		arToolkitContext.init(function onCompleted() {
-			// copy projection matrix to camera
-			camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
-		})
-
-		// update artoolkit on every frame
-		onRenderFcts.push(function() {
-			if (arToolkitSource.ready === false) return
-			arToolkitContext.update(arToolkitSource.domElement)
-		})
-
-
-		////////////////////////////////////////////////////////////////////////////////
-		//          Create a ArMarkerControls
-		////////////////////////////////////////////////////////////////////////////////
-
-		var markerRoot = new THREE.Group
-		scene.add(markerRoot)
-		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
-			type: 'pattern',
-			patternUrl: './assets/patt.gp',
-			size:2
-		})
-
-		// build a smoothedControls
-		var smoothedRoot = new THREE.Group()
-		scene.add(smoothedRoot)
-		var smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
-			lerpPosition: 0.35,
-			lerpQuaternion: 0.18,
-			lerpScale: 1,
-		})
-		onRenderFcts.push(function(delta) {
-			smoothedControls.update(markerRoot)
-		})
-		//////////////////////////////////////////////////////////////////////////////////
-		//		add an object in the scene
-		//////////////////////////////////////////////////////////////////////////////////
-
-		var arWorldRoot = smoothedRoot;
-		arWorldRoot.name = "arWorldRoot" // makes finding it easier
-
-		var geometry = new THREE.SphereGeometry(0.3, 32, 32);
-		var material = new THREE.MeshBasicMaterial({
-			color: 0xffff00
-		});
-		var sphere = new THREE.Mesh(geometry, material);
-		arWorldRoot.add(sphere);
-
-		let mtlLoader = new THREE.MTLLoader();
-		//let objLoader = new THREE.OBJLoader();
-
-		function loadIsland(islandDirectory, islandName) {
-			/* something like a docstring
-					islandDirectory			str, path to directory that contains .mtl, .obj
-					islandName					str, the name of the island files
-					positions						array of length 3, containing xyz coords for placement
-			*/
-			mtlLoader.setTexturePath(islandDirectory)
-			mtlLoader.setPath(islandDirectory)
-			// load material
-			mtlLoader.load(islandName + ".mtl", materials => {
-				materials.preload()
-				let objLoader = new THREE.OBJLoader();
-				objLoader.setMaterials(materials)
-				objLoader.setPath(islandDirectory)
-				// load object
-				objLoader.load(islandName + ".obj", object => {
-					console.log(`currently loading ${islandName}`)
-					console.log(object)
-					object.traverse(node => {
-						if (node instanceof THREE.Mesh) {
-							node.geometry.computeVertexNormals()
-						}
-					})
-					object.scale.set(...islands[islandName].scale)
-					object.position.set(...islands[islandName].position) // needs to be an array
-					console.log(islands[islandName].scale, islands[islandName])
-					object.name = islandName
-					arWorldRoot.add(object)
+				// merge frame and canvas and download the resulting file
+				mergeImages([frame, canvas]).then(b64 => {
+					console.log("downloading screenshot")
+					download(b64, "AR.png", "image/png")
 				})
+			}
+
+			//////////////////////////////////////////////////////////////////////////////////
+			//		Initialize a basic camera + lights
+			//////////////////////////////////////////////////////////////////////////////////
+
+			// Create a camera
+			var camera = new THREE.PerspectiveCamera;
+			scene.add(camera);
+
+			// add lights to scene and dynamic camera based light
+			var ambientLight = new THREE.AmbientLight(0x212223, 6);
+			scene.add(ambientLight);
+			var pointLight = new THREE.DirectionalLight(0xffffff, 4);
+			pointLight.position.set(-.5, -12, 1.5)
+			pointLight.castShadow = true;
+			scene.add(pointLight);
+			scene.add(pointLight.target);
+
+			// init renderer
+			var renderer = new THREE.WebGLRenderer({
+				antialias: true,
+				alpha: true,
+				preserveDrawingBuffer: true // needed for screenshots
+			});
+
+			renderer.setPixelRatio(4);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.domElement.style.position = 'absolute';
+			renderer.domElement.style.top = '0px';
+			renderer.domElement.style.left = '0px';
+			renderer.shadowMapEnabled = true;
+			renderer.shadowMapSoft = true;
+
+			renderer.shadowCameraNear = 0.1;
+			renderer.shadowCameraFar = 9999999999999;
+			renderer.shadowCameraFov = 150;
+
+			renderer.shadowMapBias = 0.0039;
+			renderer.shadowMapDarkness = 0.2;
+			renderer.shadowMapWidth = 1024;
+			renderer.shadowMapHeight = 1024;
+			document.body.appendChild(renderer.domElement);
+
+
+			////////////////////////////////////////////////////////////////////////////////
+			//          handle arToolkitSource
+			////////////////////////////////////////////////////////////////////////////////
+
+			var arToolkitSource = new THREEx.ArToolkitSource({
+				// to read from the webcam
+				sourceType: 'webcam',
+			})
+
+			arToolkitSource.init(function onReady() {
+				onResize()
+			})
+
+			// handle resize
+			window.addEventListener('resize', function() {
+				onResize()
+			})
+
+			function onResize() {
+				arToolkitSource.onResizeElement();
+				arToolkitSource.copyElementSizeTo(renderer.domElement)
+				if (arToolkitContext.arController !== null) {
+					arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+				}
+			}
+			////////////////////////////////////////////////////////////////////////////////
+			//          initialize arToolkitContext
+			////////////////////////////////////////////////////////////////////////////////
+
+
+			// create atToolkitContext
+			var arToolkitContext = new THREEx.ArToolkitContext({
+				cameraParametersUrl: './assets/camera_para.dat',
+				detectionMode: 'mono',
+				maxDetectionRate: 60,
+				canvasWidth: 80 * 3,
+				canvasHeight: 60 * 3,
 			})
 			// initialize it
 			arToolkitContext.init(function onCompleted() {
@@ -309,7 +253,11 @@
 			var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 				type: 'pattern',
 				patternUrl: './assets/patt.gp',
+<<<<<<< HEAD
 				size: 2
+=======
+				size: 1.5
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 			})
 
 			// build a smoothedControls
@@ -342,7 +290,10 @@
 
 			function loadIsland(islandDirectory, islandName) {
 				/* something like a docstring
+<<<<<<< HEAD
 						mtlLoader		 				THREE.MTLLoader instance
+=======
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 						islandDirectory			str, path to directory that contains .mtl, .obj
 						islandName					str, the name of the island files
 						positions						array of length 3, containing xyz coords for placement
@@ -372,6 +323,7 @@
 					})
 				})
 			}
+<<<<<<< HEAD
 			function loadObject(assetDirectory, assetname, x, y, z){
 				mtlLoader.setTexturePath(assetDirectory)
 				mtlLoader.setPath(assetDirectory)
@@ -384,10 +336,40 @@
 					// load object
 					objLoader.load(assetname + ".obj", object => {
 						console.log(`currently loading ${assetname}`)
+=======
+
+			function loadTreesOnForestIsland(assetDirectory, treesHolder, nr) {
+				var loadedTrees = [];
+				Object.keys(trees).forEach(tree => {
+					console.log(tree);
+				})
+			}
+
+			function loadAssets(assetDirectory, assetName) {
+				/* something like a docstring
+						assetName 					Name of the Asset to load
+						mtlLoader		 				THREE.MTLLoader instance
+						islandDirectory			str, path to directory that contains .mtl, .obj
+						islandName					str, the name of the island files
+						positions						array of length 3, containing xyz coords for placement
+				*/
+				mtlLoader.setTexturePath(assetDirectory)
+				mtlLoader.setPath(assetDirectory)
+				// load material
+				mtlLoader.load(assetName + ".mtl", materials => {
+					materials.preload();
+					let objLoader = new THREE.OBJLoader();
+					objLoader.setMaterials(materials)
+					objLoader.setPath(assetDirectory)
+					// load object
+					objLoader.load(assetName + ".obj", object => {
+						console.log(`currently loading ${assetName}`)
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 						console.log(object)
 						object.traverse(node => {
 							if (node instanceof THREE.Mesh) {
 								node.geometry.computeVertexNormals()
+<<<<<<< HEAD
 							}
 						})
 						object.scale.set([1,1,1])
@@ -499,12 +481,49 @@
 						arWorldRoot.add(object)
 					})
 				})
+=======
+							}
+						})
+						object.scale.set(...trees[assetName].scale)
+						spacefound = false;
+						var calcdx;
+						var calcdz;
+						while (!spacefound) {
+							potentialx = -1.3 + (Math.random());
+							potentialz = -1.8 + (Math.random());
+							if (treeposses.length > 0) {
+								for (var j = 0; j < treeposses.length; j++) {
+									var distance = distanceBetweenTwoPoints(potentialx, treeposses[j].x, potentialz, treeposses[j].z);
+									if (distance > treespacing) {
+										calcdx = potentialx;
+										calcdz = potentialz;
+										spacefound = true;
+										console.log("positionfound!: " + distance)
+									} else {
+										console.log("looking for more space because too small: " + distance)
+									}
+								}
+							} else {
+								calcdx = potentialx;
+								calcdz = potentialz;
+								spacefound = true;
+							}
+						}
+						object.position.set(calcdx, 0.4, calcdz)
+						treeposses.push(object.position);
+						console.log(trees[assetName])
+						object.name = assetName
+						arWorldRoot.add(object)
+					})
+				})
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 			}
 
 			// iterate over all islands
 			Object.keys(islands).forEach(island => {
 				loadIsland("./assets/islands/", island)
 			})
+<<<<<<< HEAD
 
 			// iterate over all trees
 			Object.keys(trees).forEach(tree => {
@@ -530,6 +549,33 @@
 				"island_lake": 1
 			}
 
+=======
+
+			// iterate over all trees
+			Object.keys(trees).forEach(tree => {
+				for (var i = 0; i < 5; i++) {
+					loadAssets("./assets/trees/", tree)
+				}
+			})
+
+
+			//////////////////////////////////////////////////////////////////////////////////
+			//		render the whole thing on the page
+			//////////////////////////////////////////////////////////////////////////////////
+
+			// render the scene
+			onRenderFcts.push(function() {
+				renderer.render(scene, camera);
+			})
+
+			// object foo
+			let islandDirections = {
+				"island_forest": 1,
+				"island_main": 1,
+				"island_lake": 1
+			}
+
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 			// run the rendering loop
 			var lastTimeMsec = null
 			requestAnimationFrame(function animate(nowMsec) {
@@ -566,9 +612,15 @@
 					// switch-case:
 					switch (island) {
 						case "island_forest":
+<<<<<<< HEAD
 							if (islandModel.position.y < 0) {
 								islandDirections[island] = 1
 							} else if (islandModel.position.y > 0.4) {
+=======
+							if (islandModel.position.y < 2) {
+								islandDirections[island] = 1
+							} else if (islandModel.position.y > 2.4) {
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 								islandDirections[island] = -1
 							}
 							dir = islandDirections[island]
@@ -585,9 +637,15 @@
 							break;
 
 						case "island_main":
+<<<<<<< HEAD
 							if (islandModel.position.y < 0) {
 								islandDirections[island] = 1
 							} else if (islandModel.position.y > 0.2) {
+=======
+							if (islandModel.position.y < 1.5) {
+								islandDirections[island] = 1
+							} else if (islandModel.position.y > 2.9) {
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 								islandDirections[island] = -1
 							}
 							dir = islandDirections[island]
@@ -597,9 +655,15 @@
 							break;
 
 						case "island_lake":
+<<<<<<< HEAD
 							if (islandModel.position.y < 0) {
 								islandDirections[island] = 1
 							} else if (islandModel.position.y > 0.6) {
+=======
+							if (islandModel.position.y < 1.8) {
+								islandDirections[island] = 1
+							} else if (islandModel.position.y > 2.4) {
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 								islandDirections[island] = -1
 							}
 							dir = islandDirections[island]
@@ -625,6 +689,7 @@
 				);
 				//console.log(pointLight.position);
 			})
+<<<<<<< HEAD
 
 		///////////////////////////////////////////////////////////////////////////
 		// 										 	CUSTOM FUNCTIONS 																 //
@@ -644,10 +709,20 @@
 	    }
 		}
 
+=======
+
+			///////////////////////////////////////////////////////////////////////////
+			// 										 	CUSTOM FUNCTIONS 																 //
+			///////////////////////////////////////////////////////////////////////////
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 			function animate() {
 				console.log("placeholder function cause gabe forgot")
 			}
 			//Island Deleter
+<<<<<<< HEAD
+=======
+			//NOTE: does this need 'name' as a parameter?
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 			function deleteIslands() {
 				for (var i = 0; i < arWorldRoot.children.length; i++) {
 					if (arWorldRoot.children[i].name) {
@@ -674,6 +749,7 @@
 				return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(z2 - z1, 2));
 			}
 
+<<<<<<< HEAD
 			function download(filename) {
 				/// create an "off-screen" anchor tag
 				var lnk = document.createElement('a'),
@@ -697,67 +773,80 @@
 					lnk.dispatchEvent(e);
 				} else if (lnk.fireEvent) {
 					lnk.fireEvent("onclick");
+=======
+			function model(name) {
+				for (var i = 0; i < arWorldRoot.children.length; i++) {
+					if (arWorldRoot.children[i].name == name) {
+						return arWorldRoot.children[i];
+					}
+>>>>>>> cc24bea11cdd9e097c647f4c7e6ac20b2270fcd9
 				}
 			}
-		}
 
-		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-395911581
-		function captureVideoFrame(video, format, width, height) {
-      if (typeof video === 'string') {
-          video = document.querySelector(video)
-      }
+			// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-395911581
+			function captureVideoFrame(video, format, width, height) {
+				if (typeof video === 'string') {
+					video = document.querySelector(video)
+				}
 
-      format = format || 'jpeg'
+				format = format || 'jpeg'
 
-      if (!video || (format !== 'png' && format !== 'jpeg')) {
-          return false
-      }
+				if (!video || (format !== 'png' && format !== 'jpeg')) {
+					return false
+				}
 
-      let canvas = document.createElement("CANVAS")
+				let canvas = document.createElement("CANVAS")
 
-      canvas.width = width || video.videoWidth
-      canvas.height = height || video.videoHeight
-      canvas.getContext('2d').drawImage(video, 0, 0)
-      let dataUri = canvas.toDataURL('image/' + format)
-      let data = dataUri.split(',')[1]
-      let mimeType = dataUri.split(';')[0].slice(5)
+				canvas.width = width || video.videoWidth
+				canvas.height = height || video.videoHeight
+				canvas.getContext('2d').drawImage(video, 0, 0)
+				let dataUri = canvas.toDataURL('image/' + format)
+				let data = dataUri.split(',')[1]
+				let mimeType = dataUri.split(';')[0].slice(5)
 
-      let bytes = window.atob(data)
-      let buf = new ArrayBuffer(bytes.length)
-      let arr = new Uint8Array(buf)
+				let bytes = window.atob(data)
+				let buf = new ArrayBuffer(bytes.length)
+				let arr = new Uint8Array(buf)
 
-      for (let i = 0; i < bytes.length; i++) {
-          arr[i] = bytes.charCodeAt(i)
-      }
+				for (let i = 0; i < bytes.length; i++) {
+					arr[i] = bytes.charCodeAt(i)
+				}
 
-      let blob = new Blob([ arr ], { type: mimeType })
-      return { blob: blob, dataUri: dataUri, format: format, width: canvas.width, height: canvas.height }
-    }
+				let blob = new Blob([arr], {
+					type: mimeType
+				})
+				return {
+					blob: blob,
+					dataUri: dataUri,
+					format: format,
+					width: canvas.width,
+					height: canvas.height
+				}
+			}
 
-		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-404543089
-		function resizeCanvas(origCanvas, width, height) {
-        let resizedCanvas = document.createElement("canvas");
-        let resizedContext = resizedCanvas.getContext("2d");
+			// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-404543089
+			function resizeCanvas(origCanvas, width, height) {
+				let resizedCanvas = document.createElement("canvas");
+				let resizedContext = resizedCanvas.getContext("2d");
 
-        resizedCanvas.height = height;
-        resizedCanvas.width = width;
+				resizedCanvas.height = height;
+				resizedCanvas.width = width;
 
-        if (width > height) {
-            // Landscape
-            resizedContext.drawImage(origCanvas, 0, 0, width, height);
-        } else {
-            // Portrait
-            var scale = height / width;
-            var scaledHeight = origCanvas.width * scale;
-            var scaledWidth = origCanvas.height * scale;
-            var marginLeft = ( origCanvas.width - scaledWidth) / 2;
-            resizedContext.drawImage(origCanvas, marginLeft, 0, scaledWidth, scaledHeight);
-        }
+				if (width > height) {
+					// Landscape
+					resizedContext.drawImage(origCanvas, 0, 0, width, height);
+				} else {
+					// Portrait
+					var scale = height / width;
+					var scaledHeight = origCanvas.width * scale;
+					var scaledWidth = origCanvas.height * scale;
+					var marginLeft = (origCanvas.width - scaledWidth) / 2;
+					resizedContext.drawImage(origCanvas, marginLeft, 0, scaledWidth, scaledHeight);
+				}
 
-        return resizedCanvas.toDataURL();
-    }
-
-	</script>
+				return resizedCanvas.toDataURL();
+			}
+		</script>
 </body>
 
 </html>
