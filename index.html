@@ -86,7 +86,7 @@
 				scale: [0.03, 0.03, 0.03]
 			},
 			"island_lake": {
-				position: [-.5, -0.1, 1.5],
+				position: [-2, -0.1, 2.5],
 				scale: [0.03, 0.03, 0.03]
 			}
 		}
@@ -198,7 +198,8 @@
 		scene.add(markerRoot)
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
-			patternUrl: './assets/patt.gp'
+			patternUrl: './assets/patt.gp',
+			size:2
 		})
 
 		// build a smoothedControls
