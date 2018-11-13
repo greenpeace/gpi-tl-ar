@@ -22,6 +22,7 @@
 	<script src="./js/ColladaLoader.js"></script>
 	<script src="./js/ar.js"></script>
 	<script src="https://unpkg.com/merge-images"></script>
+	<script src="http://danml.com/js/download.js"></script>
 	<script>
 		THREEx.ArToolkitContext.baseURL = './'
 	</script>
@@ -56,7 +57,7 @@
 	<button type="submit" id="deleteButton" style="display: block; margin: 0 auto;z-index:10" onclick="deleteIslands();"><< DELETER >></button>
 
 	<!-- snappy stuff -->
-	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10"> snappy sneks </button>
+	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10" onclick="snappysnap()"> snappy sneks </button>
 
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%">
 		Find the Marker
@@ -105,21 +106,27 @@
 
 		// setting button things
 		function snappysnap() {
-			let aScene = document
-				.querySelector("a-scene")
-				.components.screenshot.getCanvas("perspective")
+
+			// save frame from video, i.e. camera
 			let frame = captureVideoFrame("video", "png")
-			aScene = resizeCanvas(aScene, frame.width, frame.height)
+
+			// save canvas object
+			let canvas = document.querySelector("canvas")
+			console.log(canvas)
+
+			//download(canvas.toDataURL(), "precanvas.png", "image/png")
+			// resize canvas to match frame dimensions
+			canvas = resizeCanvas(canvas, frame.width, frame.height)
+			console.log(canvas)
 			frame = frame.dataUri
-			mergeImages([frame, aScene]).then(b64 => {
-				let link = document.getElementById("download-link", "png")
-				link.setAttribute("download", "AR.png")
-				link.setAttribute("href", b64)
-				link.click()
+			// download(canvas, "canvas.png", "image/png")
+
+			// merge frame and canvas and download the resulting file
+			mergeImages([frame, canvas]).then(b64 => {
+				console.log("trying to download now..")
+				download(b64, "AR.png", "image/png")
 			})
 		}
-
-		//document.getElementById("snap-button").addEventListener("click", snappysnap())
 
 		//////////////////////////////////////////////////////////////////////////////////
 		//		Initialize a basic camera + lights
