@@ -85,15 +85,15 @@
 
 		let islands = {
 			"island_forest": {
-				position: [-1.2, -0.1, -1.5],
+				position: [-1.2, 2, -1.5],
 				scale: [0.3, 0.2, 0.2]
 			},
 			"island_main": {
-				position: [1.2, -0.1, 1],
+				position: [1.2, 1.5, 1],
 				scale: [0.03, 0.03, 0.03]
 			},
 			"island_lake": {
-				position: [-2, -0.1, 2.5],
+				position: [-2, 1.8, 2.5],
 				scale: [0.03, 0.03, 0.03]
 			}
 		}
@@ -226,7 +226,7 @@
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
 			patternUrl: './assets/patt.gp',
-			size:1
+			size:1.5
 		})
 
 		// build a smoothedControls
@@ -418,9 +418,9 @@
 				// switch-case:
 				switch (island) {
 					case "island_forest":
-						if (islandModel.position.y < 0) {
+						if (islandModel.position.y < 2) {
 							islandDirections[island] = 1
-						} else if (islandModel.position.y > 0.4) {
+						} else if (islandModel.position.y > 2.4) {
 							islandDirections[island] = -1
 						}
 						dir = islandDirections[island]
@@ -437,9 +437,9 @@
 						break;
 
 					case "island_main":
-						if (islandModel.position.y < 0) {
+						if (islandModel.position.y < 1.5) {
 							islandDirections[island] = 1
-						} else if (islandModel.position.y > 0.2) {
+						} else if (islandModel.position.y > 2.9) {
 							islandDirections[island] = -1
 						}
 						dir = islandDirections[island]
@@ -449,9 +449,9 @@
 						break;
 
 					case "island_lake":
-						if (islandModel.position.y < 0) {
+						if (islandModel.position.y < 1.8) {
 							islandDirections[island] = 1
-						} else if (islandModel.position.y > 0.6) {
+						} else if (islandModel.position.y > 2.4) {
 							islandDirections[island] = -1
 						}
 						dir = islandDirections[island]
