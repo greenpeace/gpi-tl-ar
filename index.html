@@ -21,6 +21,8 @@
 	<script src="./js/MTLLoader.js"></script>
 	<script src="./js/ColladaLoader.js"></script>
 	<script src="./js/ar.js"></script>
+	<script src="https://unpkg.com/merge-images"></script>
+	<script src="http://danml.com/js/download.js"></script>
 	<script>
 		THREEx.ArToolkitContext.baseURL = './'
 	</script>
@@ -53,6 +55,10 @@
 
 <body>
 	<button type="submit" id="deleteButton" style="display: block; margin: 0 auto;z-index:10" onclick="deleteIslands();"><< DELETER >></button>
+
+	<!-- snappy stuff -->
+	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10" onclick="snappysnap()"> snappy sneks </button>
+
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%">
 		Find the Marker
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;"  src="./assets/gp.png" alt="">
@@ -92,92 +98,194 @@
 				}
 			}
 
-			// array of functions for the rendering loop
-			var onRenderFcts = [];
+		// array of functions for the rendering loop
+		var onRenderFcts = [];
 
-			// init scene and camera
-			var scene = new THREE.Scene();
-
-			//////////////////////////////////////////////////////////////////////////////////
-			//		Initialize a basic camera + lights
-			//////////////////////////////////////////////////////////////////////////////////
-
-			// Create a camera
-			var camera = new THREE.PerspectiveCamera;
-			scene.add(camera);
-
-			// add lights to scene and dynamic camera based light
-			var ambientLight = new THREE.AmbientLight(0x212223, 6);
-			scene.add(ambientLight);
-			var pointLight = new THREE.DirectionalLight(0xffffff, 4);
-			pointLight.position.set(-.5, -12, 1.5)
-			pointLight.castShadow = true;
-			scene.add(pointLight);
-			scene.add(pointLight.target);
-
-			// init renderer
-			var renderer = new THREE.WebGLRenderer({
-				antialias: true,
-				alpha: true,
-				preserveDrawingBuffer: true
-			});
-
-			renderer.setPixelRatio(4);
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			renderer.domElement.style.position = 'absolute';
-			renderer.domElement.style.top = '0px';
-			renderer.domElement.style.left = '0px';
-			renderer.shadowMapEnabled = true;
-			renderer.shadowMapSoft = true;
-
-			renderer.shadowCameraNear = 0.1;
-			renderer.shadowCameraFar = 9999999999999;
-			renderer.shadowCameraFov = 150;
-
-			renderer.shadowMapBias = 0.0039;
-			renderer.shadowMapDarkness = 0.2;
-			renderer.shadowMapWidth = 1024;
-			renderer.shadowMapHeight = 1024;
-			document.body.appendChild(renderer.domElement);
+		// init scene and camera
+		var scene = new THREE.Scene();
 
 
-			////////////////////////////////////////////////////////////////////////////////
-			//          handle arToolkitSource
-			////////////////////////////////////////////////////////////////////////////////
+		// called by snap-button, takes a screenshot of video and canvas
+		function snappysnap() {
+			// save frame from video, i.e. camera
+			let frame = captureVideoFrame("video", "png")
+			// save canvas object
+			let canvas = renderer.domElement // just object is needed
 
-			var arToolkitSource = new THREEx.ArToolkitSource({
-				// to read from the webcam
-				sourceType: 'webcam',
+			// resize canvas to match frame dimensions
+			canvas = resizeCanvas(canvas, frame.width, frame.height)
+			frame = frame.dataUri
+
+			// merge frame and canvas and download the resulting file
+			mergeImages([frame, canvas]).then(b64 => {
+				console.log("downloading screenshot")
+				download(b64, "AR.png", "image/png")
 			})
+		}
 
-			arToolkitSource.init(function onReady() {
-				onResize()
-			})
+		//////////////////////////////////////////////////////////////////////////////////
+		//		Initialize a basic camera + lights
+		//////////////////////////////////////////////////////////////////////////////////
 
-			// handle resize
-			window.addEventListener('resize', function() {
-				onResize()
-			})
+		// Create a camera
+		var camera = new THREE.PerspectiveCamera;
+		scene.add(camera);
 
-			function onResize() {
-				arToolkitSource.onResizeElement();
-				arToolkitSource.copyElementSizeTo(renderer.domElement)
-				if (arToolkitContext.arController !== null) {
-					arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
-				}
+		// add lights to scene and dynamic camera based light
+		var ambientLight = new THREE.AmbientLight(0x212223, 6);
+		scene.add(ambientLight);
+		var pointLight = new THREE.DirectionalLight(0xffffff, 4);
+		pointLight.position.set(-.5, -12, 1.5)
+		pointLight.castShadow = true;
+		scene.add(pointLight);
+		scene.add(pointLight.target);
+
+		// init renderer
+		var renderer = new THREE.WebGLRenderer({
+			antialias: true,
+			alpha: true,
+			preserveDrawingBuffer: true  // needed for screenshots
+		});
+
+		renderer.setPixelRatio(4);
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.domElement.style.position = 'absolute';
+		renderer.domElement.style.top = '0px';
+		renderer.domElement.style.left = '0px';
+		renderer.shadowMapEnabled = true;
+		renderer.shadowMapSoft = true;
+
+		renderer.shadowCameraNear = 0.1;
+		renderer.shadowCameraFar = 9999999999999;
+		renderer.shadowCameraFov = 150;
+
+		renderer.shadowMapBias = 0.0039;
+		renderer.shadowMapDarkness = 0.2;
+		renderer.shadowMapWidth = 1024;
+		renderer.shadowMapHeight = 1024;
+		document.body.appendChild(renderer.domElement);
+
+
+		////////////////////////////////////////////////////////////////////////////////
+		//          handle arToolkitSource
+		////////////////////////////////////////////////////////////////////////////////
+
+		var arToolkitSource = new THREEx.ArToolkitSource({
+			// to read from the webcam
+			sourceType: 'webcam',
+		})
+
+		arToolkitSource.init(function onReady() {
+			onResize()
+		})
+
+		// handle resize
+		window.addEventListener('resize', function() {
+			onResize()
+		})
+
+		function onResize() {
+			arToolkitSource.onResizeElement();
+			arToolkitSource.copyElementSizeTo(renderer.domElement)
+			if (arToolkitContext.arController !== null) {
+				arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
 			}
-			////////////////////////////////////////////////////////////////////////////////
-			//          initialize arToolkitContext
-			////////////////////////////////////////////////////////////////////////////////
+		}
+		////////////////////////////////////////////////////////////////////////////////
+		//          initialize arToolkitContext
+		////////////////////////////////////////////////////////////////////////////////
 
 
-			// create atToolkitContext
-			var arToolkitContext = new THREEx.ArToolkitContext({
-				cameraParametersUrl: './assets/camera_para.dat',
-				detectionMode: 'mono',
-				maxDetectionRate: 60,
-				canvasWidth: 80 * 3,
-				canvasHeight: 60 * 3,
+		// create atToolkitContext
+		var arToolkitContext = new THREEx.ArToolkitContext({
+			cameraParametersUrl: './assets/camera_para.dat',
+			detectionMode: 'mono',
+			maxDetectionRate: 60,
+			canvasWidth: 80 * 3,
+			canvasHeight: 60 * 3,
+		})
+		// initialize it
+		arToolkitContext.init(function onCompleted() {
+			// copy projection matrix to camera
+			camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+		})
+
+		// update artoolkit on every frame
+		onRenderFcts.push(function() {
+			if (arToolkitSource.ready === false) return
+			arToolkitContext.update(arToolkitSource.domElement)
+		})
+
+
+		////////////////////////////////////////////////////////////////////////////////
+		//          Create a ArMarkerControls
+		////////////////////////////////////////////////////////////////////////////////
+
+		var markerRoot = new THREE.Group
+		scene.add(markerRoot)
+		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+			type: 'pattern',
+			patternUrl: './assets/patt.gp',
+			size:2
+		})
+
+		// build a smoothedControls
+		var smoothedRoot = new THREE.Group()
+		scene.add(smoothedRoot)
+		var smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
+			lerpPosition: 0.35,
+			lerpQuaternion: 0.18,
+			lerpScale: 1,
+		})
+		onRenderFcts.push(function(delta) {
+			smoothedControls.update(markerRoot)
+		})
+		//////////////////////////////////////////////////////////////////////////////////
+		//		add an object in the scene
+		//////////////////////////////////////////////////////////////////////////////////
+
+		var arWorldRoot = smoothedRoot;
+		arWorldRoot.name = "arWorldRoot" // makes finding it easier
+
+		var geometry = new THREE.SphereGeometry(0.3, 32, 32);
+		var material = new THREE.MeshBasicMaterial({
+			color: 0xffff00
+		});
+		var sphere = new THREE.Mesh(geometry, material);
+		arWorldRoot.add(sphere);
+
+		let mtlLoader = new THREE.MTLLoader();
+		//let objLoader = new THREE.OBJLoader();
+
+		function loadIsland(islandDirectory, islandName) {
+			/* something like a docstring
+					islandDirectory			str, path to directory that contains .mtl, .obj
+					islandName					str, the name of the island files
+					positions						array of length 3, containing xyz coords for placement
+			*/
+			mtlLoader.setTexturePath(islandDirectory)
+			mtlLoader.setPath(islandDirectory)
+			// load material
+			mtlLoader.load(islandName + ".mtl", materials => {
+				materials.preload()
+				let objLoader = new THREE.OBJLoader();
+				objLoader.setMaterials(materials)
+				objLoader.setPath(islandDirectory)
+				// load object
+				objLoader.load(islandName + ".obj", object => {
+					console.log(`currently loading ${islandName}`)
+					console.log(object)
+					object.traverse(node => {
+						if (node instanceof THREE.Mesh) {
+							node.geometry.computeVertexNormals()
+						}
+					})
+					object.scale.set(...islands[islandName].scale)
+					object.position.set(...islands[islandName].position) // needs to be an array
+					console.log(islands[islandName].scale, islands[islandName])
+					object.name = islandName
+					arWorldRoot.add(object)
+				})
 			})
 			// initialize it
 			arToolkitContext.init(function onCompleted() {
@@ -517,6 +625,37 @@
 				);
 				//console.log(pointLight.position);
 			})
+			date = Date.now() * 0.0002;
+			pointLight.position.set(
+				Math.cos(date) * orbitRadius,
+				Math.sin(date) * orbitRadius,
+				Math.sin(date) * orbitRadius
+			);
+			sphere.position.set(
+				Math.cos(date) * orbitRadius,
+				Math.sin(date) * orbitRadius,
+				Math.sin(date) * orbitRadius
+			);
+			//console.log(pointLight.position);
+		})
+
+		///////////////////////////////////////////////////////////////////////////
+		// 										 	CUSTOM FUNCTIONS 																 //
+		///////////////////////////////////////////////////////////////////////////
+		function animate(){
+			console.log("placeholder function cause gabe forgot")
+		}
+    //Island Deleter
+		//NOTE: does this need 'name' as a parameter?
+	  function deleteIslands(){
+			for (var i = 0; i < arWorldRoot.children.length; i++) {
+				if (arWorldRoot.children[i].name) {
+					var toRemove = model(arWorldRoot.children[i].name);
+					arWorldRoot.remove( toRemove );
+					// animate();
+	      }
+	    }
+		}
 
 			function animate() {
 				console.log("placeholder function cause gabe forgot")
@@ -573,19 +712,65 @@
 					lnk.fireEvent("onclick");
 				}
 			}
+		}
 
-			function dlPNG() {
-				imgData = renderer.domElement.toDataURL("image/png");
-			}
+		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-395911581
+		function captureVideoFrame(video, format, width, height) {
+      if (typeof video === 'string') {
+          video = document.querySelector(video)
+      }
 
-			function model(name) {
-				for (var i = 0; i < arWorldRoot.children.length; i++) {
-					if (arWorldRoot.children[i].name == name) {
-						return arWorldRoot.children[i];
-					}
-				}
-			}
-		</script>
+      format = format || 'jpeg'
+
+      if (!video || (format !== 'png' && format !== 'jpeg')) {
+          return false
+      }
+
+      let canvas = document.createElement("CANVAS")
+
+      canvas.width = width || video.videoWidth
+      canvas.height = height || video.videoHeight
+      canvas.getContext('2d').drawImage(video, 0, 0)
+      let dataUri = canvas.toDataURL('image/' + format)
+      let data = dataUri.split(',')[1]
+      let mimeType = dataUri.split(';')[0].slice(5)
+
+      let bytes = window.atob(data)
+      let buf = new ArrayBuffer(bytes.length)
+      let arr = new Uint8Array(buf)
+
+      for (let i = 0; i < bytes.length; i++) {
+          arr[i] = bytes.charCodeAt(i)
+      }
+
+      let blob = new Blob([ arr ], { type: mimeType })
+      return { blob: blob, dataUri: dataUri, format: format, width: canvas.width, height: canvas.height }
+    }
+
+		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-404543089
+		function resizeCanvas(origCanvas, width, height) {
+        let resizedCanvas = document.createElement("canvas");
+        let resizedContext = resizedCanvas.getContext("2d");
+
+        resizedCanvas.height = height;
+        resizedCanvas.width = width;
+
+        if (width > height) {
+            // Landscape
+            resizedContext.drawImage(origCanvas, 0, 0, width, height);
+        } else {
+            // Portrait
+            var scale = height / width;
+            var scaledHeight = origCanvas.width * scale;
+            var scaledWidth = origCanvas.height * scale;
+            var marginLeft = ( origCanvas.width - scaledWidth) / 2;
+            resizedContext.drawImage(origCanvas, marginLeft, 0, scaledWidth, scaledHeight);
+        }
+
+        return resizedCanvas.toDataURL();
+    }
+
+	</script>
 </body>
 
 </html>
