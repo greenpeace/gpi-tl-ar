@@ -21,6 +21,8 @@
 	<script src="./js/MTLLoader.js"></script>
 	<script src="./js/ColladaLoader.js"></script>
 	<script src="./js/ar.js"></script>
+	<script src="https://unpkg.com/merge-images"></script>
+	<script src="http://danml.com/js/download.js"></script>
 	<script>
 		THREEx.ArToolkitContext.baseURL = './'
 	</script>
@@ -53,6 +55,10 @@
 
 <body>
 	<button type="submit" id="deleteButton" style="display: block; margin: 0 auto;z-index:10" onclick="deleteIslands();"><< DELETER >></button>
+
+	<!-- snappy stuff -->
+	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10" onclick="snappysnap()"> snappy sneks </button>
+
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%">
 		Find the Marker
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;"  src="./assets/gp.png" alt="">
@@ -64,7 +70,8 @@
 
 		var date;
 		var orbitRadius = 7;
-
+		var treeposses=[];
+		var treespacing=0.8;
 		var trees = {
 			"beech_tree": {
 				parent:"island_forest",
@@ -79,14 +86,14 @@
 		let islands = {
 			"island_forest": {
 				position: [-1.2, -0.1, -1.5],
-				scale: [0.1, 0.1, 0.1]
+				scale: [0.2, 0.2, 0.2]
 			},
 			"island_main": {
 				position: [1.2, -0.1, 1],
 				scale: [0.03, 0.03, 0.03]
 			},
 			"island_lake": {
-				position: [-.5, -0.1, 1.5],
+				position: [-2, -0.1, 2.5],
 				scale: [0.03, 0.03, 0.03]
 			}
 		}
@@ -96,6 +103,31 @@
 
 		// init scene and camera
 		var scene = new THREE.Scene();
+
+
+		// setting button things
+		function snappysnap() {
+
+			// save frame from video, i.e. camera
+			let frame = captureVideoFrame("video", "png")
+
+			// save canvas object
+			let canvas = document.querySelector("canvas")
+			console.log(canvas)
+
+			//download(canvas.toDataURL(), "precanvas.png", "image/png")
+			// resize canvas to match frame dimensions
+			canvas = resizeCanvas(canvas, frame.width, frame.height)
+			console.log(canvas)
+			frame = frame.dataUri
+			// download(canvas, "canvas.png", "image/png")
+
+			// merge frame and canvas and download the resulting file
+			mergeImages([frame, canvas]).then(b64 => {
+				console.log("trying to download now..")
+				download(b64, "AR.png", "image/png")
+			})
+		}
 
 		//////////////////////////////////////////////////////////////////////////////////
 		//		Initialize a basic camera + lights
@@ -198,7 +230,8 @@
 		scene.add(markerRoot)
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
-			patternUrl: './assets/patt.gp'
+			patternUrl: './assets/patt.gp',
+			size:2
 		})
 
 		// build a smoothedControls
@@ -279,7 +312,7 @@
 			mtlLoader.setPath(assetDirectory)
 			// load material
 			mtlLoader.load(assetName + ".mtl", materials => {
-				materials.preload()
+				materials.preload();
 				let objLoader = new THREE.OBJLoader();
 				objLoader.setMaterials(materials)
 				objLoader.setPath(assetDirectory)
@@ -293,7 +326,32 @@
 						}
 					})
 					object.scale.set(...trees[assetName].scale)
-					object.position.set(-1.7+(Math.random()*0.5), 0.4, -1.25+(Math.random()*0.3))
+					spacefound = false;
+					var calcdx;
+					var calcdz;
+					while (!spacefound){
+						potentialx = -1.3+(Math.random());
+						potentialz = -1.8+(Math.random());
+						if(treeposses.length>0){
+							for(var j = 0 ; j < treeposses.length ; j++){
+								var distance = distanceBetweenTwoPoints(potentialx, treeposses[j].x, potentialz, treeposses[j].z);
+								if(distance>treespacing){
+									calcdx=potentialx;
+									calcdz=potentialz;
+									spacefound=true;
+									console.log("positionfound!: "+ distance )
+								} else {
+									console.log("looking for more space because too small: " + distance)
+								}
+							}
+						} else {
+							calcdx=potentialx;
+							calcdz=potentialz;
+							spacefound=true;
+						}
+					}
+					object.position.set(calcdx, 0.4, calcdz)
+					treeposses.push(object.position);
 					console.log(trees[assetName])
 					object.name = assetName
 					arWorldRoot.add(object)
@@ -426,11 +484,15 @@
 			//console.log(pointLight.position);
 		})
 
-		function animate() {
+		///////////////////////////////////////////////////////////////////////////
+		// 										 	CUSTOM FUNCTIONS 																 //
+		///////////////////////////////////////////////////////////////////////////
+		function animate(){
 			console.log("placeholder function cause gabe forgot")
 		}
-		//Island Deleter
-		function deleteIslands() {
+    //Island Deleter
+		//NOTE: does this need 'name' as a parameter?
+	  function deleteIslands(){
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name) {
 					var toRemove = model(arWorldRoot.children[i].name);
@@ -451,7 +513,9 @@
 			model("island_forest").children[0].material.color.b = clarity;
 			model("island_forest").children[0].material.opacity = 1 - clarity * .3;
 		}
-
+		function distanceBetweenTwoPoints(x1,z1,x2,z2){
+			return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(z2-z1,2));
+		}
 		function model(name) {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name == name) {
@@ -459,6 +523,51 @@
 				}
 			}
 		}
+
+		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-395911581
+		function captureVideoFrame(video, format, width, height) {
+      if (typeof video === 'string') {
+          video = document.querySelector(video)
+      }
+
+      format = format || 'jpeg'
+
+      if (!video || (format !== 'png' && format !== 'jpeg')) {
+          return false
+      }
+
+      let canvas = document.createElement("CANVAS")
+
+      canvas.width = width || video.videoWidth
+      canvas.height = height || video.videoHeight
+      canvas.getContext('2d').drawImage(video, 0, 0)
+      let dataUri = canvas.toDataURL('image/' + format)
+      let data = dataUri.split(',')[1]
+      let mimeType = dataUri.split(';')[0].slice(5)
+
+      let bytes = window.atob(data)
+      let buf = new ArrayBuffer(bytes.length)
+      let arr = new Uint8Array(buf)
+
+      for (let i = 0; i < bytes.length; i++) {
+          arr[i] = bytes.charCodeAt(i)
+      }
+
+      let blob = new Blob([ arr ], { type: mimeType })
+      return { blob: blob, dataUri: dataUri, format: format, width: canvas.width, height: canvas.height }
+    }
+
+		function resizeCanvas(origCanvas, width, height) {
+			let resizedCanvas = document.createElement("canvas");
+			let resizedContext = resizedCanvas.getContext("2d");
+
+			resizedCanvas.height = width;
+			resizedCanvas.width = height;
+
+			resizedContext.drawImage(origCanvas, 0, 0, width, height);
+			return resizedCanvas.toDataURL();
+		}
+
 	</script>
 </body>
 </html>
