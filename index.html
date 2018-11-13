@@ -304,14 +304,13 @@
 						if(treeposses.length>0){
 							for(var j = 0 ; j < treeposses.length ; j++){
 								var distance = distanceBetweenTwoPoints(potentialx, treeposses[j].x, potentialz, treeposses[j].z);
-								console.log(distance);
 								if(distance>treespacing){
 									calcdx=potentialx;
 									calcdz=potentialz;
 									spacefound=true;
-									console.log("positionfound!")
+									console.log("positionfound!: "+ distance )
 								} else {
-									console.log("looking for more space")
+									console.log("looking for more space because too small: " + distance)
 								}
 							}
 						} else {
