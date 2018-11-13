@@ -507,10 +507,10 @@
 			}
 
 			function setWaterClarity(clarity) {
-				model("island_forest").children[0].material.color.r = 0;
-				model("island_forest").children[0].material.color.g = clarity * 0.2;
-				model("island_forest").children[0].material.color.b = clarity;
-				model("island_forest").children[0].material.opacity = 1 - clarity * .3;
+				model("island_lake").children[0].material[3].color.r = 0;
+				model("island_lake").children[0].material[3].color.g = clarity * 0.2;
+				model("island_lake").children[0].material[3].color.b = clarity;
+				model("island_lake").children[0].material[3].opacity = 1 - clarity * .3;
 			}
 
 			function distanceBetweenTwoPoints(x1, z1, x2, z2) {
