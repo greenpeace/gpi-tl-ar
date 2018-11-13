@@ -55,7 +55,6 @@
 </head>
 
 <body>
-	<button type="submit" id="deleteButton" style="display: block; margin: 0 auto;z-index:10" onclick="deleteIslands();"><< DELETER >></button>
 
 	<!-- snappy stuff -->
 	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10" onclick="snappysnap()"> snappy sneks </button>
@@ -227,7 +226,7 @@
 		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
 			patternUrl: './assets/patt.gp',
-			size:2
+			size:1
 		})
 
 		// build a smoothedControls
