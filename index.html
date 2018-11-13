@@ -52,7 +52,6 @@
 		canvas {
 			z-index: -1
 		}
-
 	</style>
 
 </head>
@@ -525,6 +524,14 @@
 				}
 			}
 
+			function findMat(iname, tname) {
+				materials = model(iname).children[0].material;
+				for (var x = 0; x < materials.length; x++) {
+					if (materials[x].name == tname) {
+						return materials[x]
+					}
+				}
+			}
 			// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-395911581
 			function captureVideoFrame(video, format, width, height) {
 				if (typeof video === 'string') {
