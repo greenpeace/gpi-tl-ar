@@ -7,6 +7,7 @@
 	<meta name="mobile-web-app-capable" content="yes">
 	<title>AR - fur shurr</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="./js/canvas2image.js"></script>
 	<script src='./js/three.min.js'></script>
@@ -49,6 +50,30 @@
 			vertical-align: middle;
 		}
 
+		#ui {
+			text-align: right;
+		}
+
+		.fab {
+			font-size: 8vw;
+			margin-bottom: 10px;
+			margin-right: 10px;
+		}
+
+		.fa-twitter {
+			color: #00aced;
+		}
+		.fa-twitter:hover {
+			color: #00acee;
+			cursor: pointer;
+		}
+		.fa-facebook {
+			color: #3b5998;
+		}
+		.fa-facebook:hover {
+			color: #3b5999;
+			cursor: pointer;
+		}
 		canvas {
 			z-index: -1
 		}
@@ -57,18 +82,41 @@
 </head>
 
 <body>
+	<!-- fb stuff -->
+	<div id="fb-root"></div>
+	<script>
+		(function(d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s);
+			js.id = id;
+			js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2&appId=1419486391712711&autoLogAppEvents=1';
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+
+	</script>
 	<!-- snappy stuff -->
 	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10" onclick="snappysnap()"> snappy sneks </button>
 
-	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%">
+	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%;top:0">
 		Find the Marker
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;" src="./assets/gp.png" alt="">
+	</div>
+	<div id="ui">
+		<i class="fab fa-twitter" data-size="large"></i>
+		<br>
+		<i class="fab fa-facebook" data-size="large"></i>
 	</div>
 	<script>
 		//////////////////////////////////////////////////////////////////////////////////
 		//		Init
 		//////////////////////////////////////////////////////////////////////////////////
-
+		$(".fa-twitter").click(function(){
+			snappysnap('twitter')
+		})//
+		$(".fa-facebook").click(function(){
+			snappysnap('facebook')
+		})
 		var date;
 		var orbitRadius = 7;
 		var treeposses = [];
@@ -86,15 +134,15 @@
 
 		let islands = {
 			"island_forest": {
-				position: [-1.2, 2, -1.5],
+				position: [-1, 2, -1],
 				scale: [0.2, 0.13, 0.13]
 			},
 			"island_main": {
-				position: [1.2, 1.5, 1],
+				position: [0,2.1,0],
 				scale: [0.03, 0.03, 0.03]
 			},
 			"island_lake": {
-				position: [-2, 1.8, 2.5],
+				position: [-1, 1.8, 1.2],
 				scale: [0.03, 0.03, 0.03]
 			}
 		}
@@ -131,7 +179,7 @@
 		}
 
 		// called by snap-button, takes a screenshot of video and canvas
-		function snappysnap() {
+		function snappysnap(platform) {
 			// save frame from video, i.e. camera
 			let frame = captureVideoFrame("video", "png")
 			// save canvas object
@@ -154,27 +202,48 @@
 				formData.append('picture', blob);
 				//var form_data = new FormData($('#uploadForm')[0]);
 				//console.log(form_data);
-				$.ajax({
-					type: 'POST',
-					url: 'https://ul.greenpeace.international/upload',
-					processData: false,
-					contentType: false,
-					async: false,
-					cache: false,
-					data: formData,
-					success: function(response) {
-						console.log(response);
-						//$("body").append('<a href="https://twitter.com/intent/tweet?text='+response+'%20Check%20out%20my%20AR%20Impact%21&source=webclient"><i class="fab fa-twitter"  data-size="large"></i></a>')
-						setTimeout(function() {
-							window.open('https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient');
-						}, 25);
-						window.location = "twitter://post?message=" + response + "%20Check%20out%20my%20AR%20Impact";
+				if(platform == 'twitter'){
+					$.ajax({
+						type: 'POST',
+						url: 'https://ul.greenpeace.international/upload',
+						processData: false,
+						contentType: false,
+						async: false,
+						cache: false,
+						data: formData,
+						success: function(response) {
+							console.log(response);
+							//$("body").append('<a href="https://twitter.com/intent/tweet?text='+response+'%20Check%20out%20my%20AR%20Impact%21&source=webclient"><i class="fab fa-twitter"  data-size="large"></i></a>')
+							setTimeout(function() {
+								window.open('https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient');
+							}, 25);
+							window.open("twitter://post?message=" + response + "%20Check%20out%20my%20AR%20Impact");
 
-					},
-					error: function(error) {
-						console.log(error)
-					}
-				});
+						},
+						error: function(error) {
+							console.log(error)
+						}
+					});
+				} else if (platform == 'facebook'){
+					$.ajax({
+						type: 'POST',
+						url: 'https://ul.greenpeace.international/upload',
+						processData: false,
+						contentType: false,
+						async: false,
+						cache: false,
+						data: formData,
+						success: function(response) {
+							console.log(response);
+							window.open('https://www.facebook.com/sharer/sharer.php?u='+response+'&amp;src=sdkpreparse', '_blank');
+
+						},
+						error: function(error) {
+							console.log(error)
+						}
+					});
+				}
+
 			})
 		}
 
@@ -228,6 +297,8 @@
 		var arToolkitSource = new THREEx.ArToolkitSource({
 			// to read from the webcam
 			sourceType: 'webcam',
+			sourceWidth: 1980,
+			sourceHeight: 1080
 		})
 
 		arToolkitSource.init(function onReady() {
@@ -446,9 +517,11 @@
 			requestAnimationFrame(animate);
 			// lift or lower blinds based on whether marker is visible or not.
 			if (markerRoot.visible) {
-				$("#blinds").fadeOut(100)
+				$("#blinds").fadeOut(100);
+				$("#ui").fadeIn();
 			} else {
-				$("#blinds").fadeIn()
+				$("#blinds").fadeIn();
+				$("#ui").fadeOut(100);
 			}
 			// measure time
 			lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60
