@@ -118,7 +118,7 @@
 			snappysnap('facebook')
 		})
 		var date;
-		var orbitRadius = 7;
+		var orbitRadius = 12;
 		var treeposses = [];
 		var treespacing = 0.8;
 		var trees = {
@@ -594,7 +594,7 @@
 						//console.log(`entered default case for variable ${island}.`)
 				}
 			})
-			date = Date.now() * 0.0002;
+			date = Date.now() * 0.0006;
 			pointLight.position.set(
 				Math.cos(date) * orbitRadius,
 				Math.sin(date) * orbitRadius,
