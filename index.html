@@ -51,13 +51,13 @@
 		}
 
 		#ui {
-			width:100%;
-			height:50px;
-			position:absolute;
+			width: 100%;
+			height: 50px;
+			position: absolute;
 			text-align: center;
 			background: rgba(0, 0, 0, 0.4);
-			margin:0;
-			bottom:0;
+			margin: 0;
+			bottom: 0;
 			letter-spacing: 10px;
 		}
 
@@ -105,6 +105,9 @@
 		//////////////////////////////////////////////////////////////////////////////////
 		//		Init
 		//////////////////////////////////////////////////////////////////////////////////
+		document.ontouchmove = function(e) {
+			e.preventDefault();
+		}
 		$(".fa-twitter").click(function() {
 			snappysnap('twitter')
 		}) //
@@ -208,7 +211,7 @@
 						success: function(response) {
 							console.log(response);
 							//$("body").append('<a href="https://twitter.com/intent/tweet?text='+response+'%20Check%20out%20my%20AR%20Impact%21&source=webclient"><i class="fab fa-twitter"  data-size="large"></i></a>')
-							window.location.href ='https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient';
+							window.location.href = 'https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient';
 
 						},
 						error: function(error) {
