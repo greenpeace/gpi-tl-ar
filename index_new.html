@@ -22,11 +22,7 @@
 	<script src="./js/ColladaLoader.js"></script>
 	<script src="./js/ar.js"></script>
 	<script src="https://unpkg.com/merge-images"></script>
-<<<<<<< HEAD
-	<script src="https://danml.com/js/download.js"></script>
-=======
 	<script src="./js/download.js"></script>
->>>>>>> ca6456622069570236ecffa779094e83bf775cae
 	<script>
 		THREEx.ArToolkitContext.baseURL = './'
 	</script>
@@ -232,7 +228,8 @@
 			var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 				type: 'pattern',
 				patternUrl: './assets/patt.gp',
-				size: 1
+				size: 1,
+				confidence:.2
 			})
 
 			// build a smoothedControls
@@ -258,8 +255,11 @@
 				color: 0xffff00
 			});
 			var sphere = new THREE.Mesh(geometry, material);
+			//var reference = new THREE.Mesh(geometry, material);
 			arWorldRoot.add(sphere);
+			//arWorldRoot.add(reference);
 
+			//reference.position.set(0,0,0);
 			let mtlLoader = new THREE.MTLLoader();
 			//let objLoader = new THREE.OBJLoader();
 
@@ -295,14 +295,38 @@
 				})
 			}
 
-			function loadTreesOnForestIsland(assetDirectory, treesHolder, nr) {
-				var loadedTrees = [];
-				Object.keys(trees).forEach(tree => {
-					console.log(tree);
+      function loadAsset(assetDirectory, assetName, x, y, z, sx, sy, sz) {
+				/* something like a docstring
+						islandDirectory			str, path to directory that contains .mtl, .obj
+						islandName					str, the name of the island files
+						positions						array of length 3, containing xyz coords for placement
+				*/
+				mtlLoader.setTexturePath(assetDirectory)
+				mtlLoader.setPath(assetDirectory)
+				// load material
+				mtlLoader.load(assetName + ".mtl", materials => {
+					materials.preload()
+					let objLoader = new THREE.OBJLoader();
+					objLoader.setMaterials(materials)
+					objLoader.setPath(assetDirectory)
+					// load object
+					objLoader.load(assetName + ".obj", object => {
+						console.log(`currently loading ${assetName}`)
+						console.log(object)
+						object.traverse(node => {
+							if (node instanceof THREE.Mesh) {
+								node.geometry.computeVertexNormals()
+							}
+						})
+						object.scale.set(sx,sy,sz)
+						object.position.set(x,y,z)
+						object.name = assetName
+						arWorldRoot.add(object)
+					})
 				})
 			}
 
-			function loadAssets(assetDirectory, assetName) {
+			function loadTreesOnForestIsland(assetDirectory, assetName) {
 				/* something like a docstring
 						assetName 					Name of the Asset to load
 						mtlLoader		 				THREE.MTLLoader instance
@@ -369,7 +393,7 @@
 			// iterate over all trees
 			Object.keys(trees).forEach(tree => {
 				for (var i = 0; i < 5; i++) {
-					loadAssets("./assets/trees/", tree)
+					//loadTreesOnForestIsland("./assets/trees/", tree)
 				}
 			})
 
@@ -399,7 +423,8 @@
 				if (markerRoot.visible) {
 					$("#blinds").fadeOut(100)
 				} else {
-					$("#blinds").fadeIn()
+					$("#blinds").fadeIn();
+					camera
 				}
 				// measure time
 				lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60
@@ -503,7 +528,40 @@
 					}
 				}
 			}
-
+			function addXTreesToForest(x){
+				for(var i = 0 ; i < x ; i++){
+					addTreeToForest();
+				}
+			}
+			function addTreeToForest(){
+				if(treeposses.length == 0){
+					loadAsset("./assets/trees/", "pine_tree",-.5, 2, -1.2,0.05,0.05,0.05);
+					treeposses.push({x:-.5, y:2, z:-1.2});
+				} else {
+					var foundspace = false;
+					while(!foundspace){
+						var potentialx = (Math.random());
+						potentialx *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						potentialx += -.5;
+						var potentialz = (Math.random());
+						potentialz *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+						potentialz +=  -1.2;
+						foundspace = true;
+						for(var z = 0 ; z < treeposses.length; z++){
+							console.log(treeposses[z])
+							var distance = distanceBetweenTwoPoints(potentialx,potentialz,treeposses[z].x,treeposses[z].z);
+							console.log(distance);
+							if(distance<.15){
+								foundspace = false;
+							}
+						}
+						if(foundspace){
+							loadAsset("./assets/trees/", "pine_tree",potentialx, 2, potentialz,0.05,0.05,0.05);
+							treeposses.push({x:potentialx, y:2, z:potentialz});
+						}
+					}
+				}
+			}
 			function setGrassGreenness(greenness) {
 				model("island_forest").children[0].material.color.r = 1 - greenness;
 				model("island_forest").children[0].material.color.g = greenness * .7 + 0.3;
