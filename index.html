@@ -114,15 +114,12 @@
 
 				<div class="container has-text-centered">
 					<div class="column is-6 is-offset-3">
-						<h1 class="title has-text-dark">TechLab AR Project</h1>
+						<h1 id="formtitle" class="title has-text-dark">TechLab AR Project</h1>
 						<br>
 
 						<h2 class="subtitle has-text-white">
-							<b>Estimate your personal carbon footprint and see what plausible impact it has on floating islands, in terms of deforestation and plastic and oil consumption.</b>
-							<br>
-							<br>
-							<br>
-							<br>
+							<b id="description">Estimate your personal carbon footprint and see what plausible impact it has on floating islands, in terms of deforestation and plastic and oil consumption.<br><br></b>
+
 
 
 							<!-- button to begin calculation of footprint -->
@@ -139,21 +136,23 @@
 								<p class="control is-expanded">
 									<a class="control has-text-dark" type="text"><b>How many hours do you fly per year?</b>
 								</p>
-								<p class="control">
-									<a class="button is-success" onclick="setOilToRange1()">
-										0-10 hours
-									</a>
-								</p>
-								<p class="control">
-									<a class="button is-warning" onclick="setOilToRange2()">
-										10-20 hours
-									</a>
-								</p>
-								<p class="control">
-									<a class="button is-danger" onclick="setOilToRange3()">
-										20+ hours
-									</a>
-								</p>
+								<div class="columns">
+									<p class="control column">
+										<a class="button is-success" onclick="setOilToRange1()">
+											0-10 hours
+										</a>
+									</p>
+									<p class="control column">
+										<a class="button is-warning" onclick="setOilToRange2()">
+											10-20 hours
+										</a>
+									</p>
+									<p class="control column">
+										<a class="button is-danger" onclick="setOilToRange3()">
+											20+ hours
+										</a>
+									</p>
+								</div>
 							</div>
 
 
@@ -166,21 +165,23 @@
 								<p class="control is-expanded">
 									<a class="control has-text-dark" type="text"><b>How many items using plastic packaging do you consume per week?</b>
 								</p>
-								<p class="control">
-									<a class="button is-success" onclick="setPlasticToRange1()">
-										0-10 items
-									</a>
-								</p>
-								<p class="control">
-									<a class="button is-warning" onclick="setPlasticToRange2()">
-										10-20 items
-									</a>
-								</p>
-								<p class="control">
-									<a class="button is-danger" onclick="setPlasticToRange3()">
-										20+ items
-									</a>
-								</p>
+								<div class="columns">
+									<p class="control column">
+										<a class="button is-success" onclick="setPlasticToRange1()">
+											0-10 items
+										</a>
+									</p>
+									<p class="control column">
+										<a class="button is-warning" onclick="setPlasticToRange2()">
+											10-20 items
+										</a>
+									</p>
+									<p class="control column">
+										<a class="button is-danger" onclick="setPlasticToRange3()">
+											20+ items
+										</a>
+									</p>
+								</div>
 							</div>
 
 
@@ -192,22 +193,23 @@
 									<a class="control has-text-dark" type="text"><b>How would you best describe your diet?</b>
 								</p>
 
-
-								<p class="control">
-									<a class="button is-success" onclick="setForestToRange1()">
-										Vegan/Vegetarian
-									</a>
-								</p>
-								<p class="control">
-									<a class="button is-warning" onclick="setForestToRange2()">
-										I eat meat rarely
-									</a>
-								</p>
-								<p class="control">
-									<a class="button is-danger" onclick="setForestToRange3()">
-										I eat meat everyday
-									</a>
-								</p>
+								<div class="columns">
+									<p class="control column">
+										<a class="button is-success" onclick="setForestToRange1()">
+											Vegan/Vegetarian
+										</a>
+									</p>
+									<p class="control column">
+										<a class="button is-warning" onclick="setForestToRange2()">
+											I eat meat rarely
+										</a>
+									</p>
+									<p class="control column">
+										<a class="button is-danger" onclick="setForestToRange3()">
+											I eat meat everyday
+										</a>
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -848,6 +850,8 @@
 		}
 
 		function Begin() {
+			$("#formtitle").hide();
+			$("#description").hide();
 			$("#calculationBox").hide();
 			$("#boxyBox").fadeIn();
 		}
