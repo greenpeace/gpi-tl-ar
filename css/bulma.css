@@ -134,7 +134,6 @@
   min-width: 32px;
   width: 32px
 }
-
 .button.is-loading::after, .control.is-loading::after, .loader, .select.is-loading::after {
   -webkit-animation: spinAround .5s infinite linear;
   animation: spinAround .5s infinite linear;
