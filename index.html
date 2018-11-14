@@ -143,12 +143,12 @@
 
 			// merge frame and canvas and download the resulting file
 			mergeImages([frame, canvas]).then(b64 => {
-				console.log("downloading screenshotty: "+ b64);
+				console.log("downloading screenshotty: " + b64);
 				//download(b64, "AR.png", "image/png")
 				//$("#fileholder")[0].setAttribute("value", b64);
 				console.log(b64);
 				var base64ImageContent = b64.replace(/^data:image\/(png|jpg);base64,/, "");
-				console.log("b64: "+base64ImageContent);
+				console.log("b64: " + base64ImageContent);
 				var blob = base64ToBlob(base64ImageContent, 'image/png');
 				var formData = new FormData();
 				formData.append('picture', blob);
@@ -165,8 +165,10 @@
 					success: function(response) {
 						console.log(response);
 						//$("body").append('<a href="https://twitter.com/intent/tweet?text='+response+'%20Check%20out%20my%20AR%20Impact%21&source=webclient"><i class="fab fa-twitter"  data-size="large"></i></a>')
-						setTimeout(function () { 	window.location.replace('https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient'); }, 25);
-						window.location = "twitter://https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact";
+						setTimeout(function() {
+							window.open('https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient');
+						}, 25);
+						window.location = "twitter://post?message=" + response + "%20Check%20out%20my%20AR%20Impact";
 
 					},
 					error: function(error) {
