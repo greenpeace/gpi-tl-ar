@@ -51,29 +51,39 @@
 		}
 
 		#ui {
-			text-align: right;
+			width:100%;
+			height:50px;
+			position:absolute;
+			text-align: center;
+			background: rgba(0, 0, 0, 0.4);
+			margin:0;
+			bottom:0;
+			letter-spacing: 10px;
 		}
 
 		.fab {
-			font-size: 8vw;
-			margin-bottom: 10px;
-			margin-right: 10px;
+			font-size: 40px;
+			line-height: 45px;
+			margin-bottom: 20px;
+			margin-right: 20px;
 		}
 
 		.fa-twitter {
 			color: #00aced;
 		}
+
 		.fa-twitter:hover {
-			color: #00acee;
 			cursor: pointer;
 		}
+
 		.fa-facebook {
 			color: #3b5998;
 		}
+
 		.fa-facebook:hover {
-			color: #3b5999;
 			cursor: pointer;
 		}
+
 		canvas {
 			z-index: -1
 		}
@@ -82,21 +92,6 @@
 </head>
 
 <body>
-	<!-- fb stuff -->
-	<div id="fb-root"></div>
-	<script>
-		(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s);
-			js.id = id;
-			js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2&appId=1419486391712711&autoLogAppEvents=1';
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-
-	</script>
-	<!-- snappy stuff -->
-	<button id="snap-button" style="display: block; margin: 0 auto;z-index:10" onclick="snappysnap()"> snappy sneks </button>
 
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%;top:0">
 		Find the Marker
@@ -104,17 +99,16 @@
 	</div>
 	<div id="ui">
 		<i class="fab fa-twitter" data-size="large"></i>
-		<br>
 		<i class="fab fa-facebook" data-size="large"></i>
 	</div>
 	<script>
 		//////////////////////////////////////////////////////////////////////////////////
 		//		Init
 		//////////////////////////////////////////////////////////////////////////////////
-		$(".fa-twitter").click(function(){
+		$(".fa-twitter").click(function() {
 			snappysnap('twitter')
-		})//
-		$(".fa-facebook").click(function(){
+		}) //
+		$(".fa-facebook").click(function() {
 			snappysnap('facebook')
 		})
 		var date;
@@ -138,7 +132,7 @@
 				scale: [0.2, 0.13, 0.13]
 			},
 			"island_main": {
-				position: [0,1,0],
+				position: [0, 1, 0],
 				scale: [0.03, 0.03, 0.03]
 			},
 			"island_lake": {
@@ -202,7 +196,7 @@
 				formData.append('picture', blob);
 				//var form_data = new FormData($('#uploadForm')[0]);
 				//console.log(form_data);
-				if(platform == 'twitter'){
+				if (platform == 'twitter') {
 					$.ajax({
 						type: 'POST',
 						url: 'https://ul.greenpeace.international/upload',
@@ -214,17 +208,14 @@
 						success: function(response) {
 							console.log(response);
 							//$("body").append('<a href="https://twitter.com/intent/tweet?text='+response+'%20Check%20out%20my%20AR%20Impact%21&source=webclient"><i class="fab fa-twitter"  data-size="large"></i></a>')
-							setTimeout(function() {
-								window.open('https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient');
-							}, 25);
-							window.open("twitter://post?message=" + response + "%20Check%20out%20my%20AR%20Impact");
+							window.location.href ='https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient';
 
 						},
 						error: function(error) {
 							console.log(error)
 						}
 					});
-				} else if (platform == 'facebook'){
+				} else if (platform == 'facebook') {
 					$.ajax({
 						type: 'POST',
 						url: 'https://ul.greenpeace.international/upload',
@@ -235,7 +226,7 @@
 						data: formData,
 						success: function(response) {
 							console.log(response);
-							window.open('https://www.facebook.com/sharer/sharer.php?u='+response+'&amp;src=sdkpreparse', '_blank');
+							window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=' + response + '&amp;src=sdkpreparse';
 
 						},
 						error: function(error) {
