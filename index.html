@@ -8,6 +8,7 @@
 	<title>AR - fur shurr</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	<link rel="stylesheet" href="../css/bulma.css" />
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="./js/canvas2image.js"></script>
 	<script src='./js/three.min.js'></script>
@@ -49,7 +50,13 @@
 			height: 75%;
 			vertical-align: middle;
 		}
-
+		#landing{
+			height: 100%;
+			width:100%;
+			position: absolute;
+			background: rgba(100,100,100,1);
+			z-index: 4;
+		}
 		#ui {
 			width: 100%;
 			height: 50px;
@@ -83,7 +90,16 @@
 		.fa-facebook:hover {
 			cursor: pointer;
 		}
+		.has-bg-img {
+			height: 100%;
+			width:100%;
+	    background: url('issland.jpg');
+	    -webkit-background-size: cover;
+	    -moz-background-size: cover;
+	    -o-background-size: cover;
+	    background-size: cover;
 
+	  }
 		canvas {
 			z-index: -1
 		}
@@ -92,7 +108,113 @@
 </head>
 
 <body>
+	<div id="landing">
+		<div class="hero is-large has-bg-img">
+			<div class="hero-body has-bg-img">
 
+				<div class="container has-text-centered">
+					<div class="column is-6 is-offset-3">
+						<h1 class="title has-text-dark">TechLab AR Project</h1>
+						<br>
+
+						<h2 class="subtitle has-text-white">
+							<b>Estimate your personal carbon footprint and see what plausible impact it has on floating islands, in terms of deforestation and plastic and oil consumption.</b>
+							<br>
+							<br>
+							<br>
+							<br>
+
+
+							<!-- button to begin calculation of footprint -->
+							<a class="button is-primary has-text-dark" id="calculationBox" onclick="Begin()">
+								<b> Calculate your footprint </b>
+							</a>
+					</div>
+
+					<!-- Question One - Carbon -->
+					<div class="column is-8 is-offset-2">
+						<div class="box" id="boxyBox">
+							<div class="field is-grouped" id="questionOne">
+
+								<p class="control is-expanded">
+									<a class="control has-text-dark" type="text"><b>How many hours do you fly per year?</b>
+								</p>
+								<p class="control">
+									<a class="button is-success" onclick="setOilToRange1()">
+										0-10 hours
+									</a>
+								</p>
+								<p class="control">
+									<a class="button is-warning" onclick="setOilToRange2()">
+										10-20 hours
+									</a>
+								</p>
+								<p class="control">
+									<a class="button is-danger" onclick="setOilToRange3()">
+										20+ hours
+									</a>
+								</p>
+							</div>
+
+
+
+
+							<!-- Question Two - Plastic -->
+							<!-- <div class="box hidden"   > -->
+							<div class="field is-grouped" id="questionTwo" hidden>
+
+								<p class="control is-expanded">
+									<a class="control has-text-dark" type="text"><b>How many items using plastic packaging do you consume per week?</b>
+								</p>
+								<p class="control">
+									<a class="button is-success" onclick="setPlasticToRange1()">
+										0-10 items
+									</a>
+								</p>
+								<p class="control">
+									<a class="button is-warning" onclick="setPlasticToRange2()">
+										10-20 items
+									</a>
+								</p>
+								<p class="control">
+									<a class="button is-danger" onclick="setPlasticToRange3()">
+										20+ items
+									</a>
+								</p>
+							</div>
+
+
+							<!-- Question Three - Oil -->
+							<!-- <div class="box hidden"> -->
+							<div class="field is-grouped" id="questionThree" hidden>
+
+								<p class="control is-expanded">
+									<a class="control has-text-dark" type="text"><b>How would you best describe your diet?</b>
+								</p>
+
+
+								<p class="control">
+									<a class="button is-success" onclick="setForestToRange1()">
+										Vegan/Vegetarian
+									</a>
+								</p>
+								<p class="control">
+									<a class="button is-warning" onclick="setForestToRange2()">
+										I eat meat rarely
+									</a>
+								</p>
+								<p class="control">
+									<a class="button is-danger" onclick="setForestToRange3()">
+										I eat meat everyday
+									</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%;top:0">
 		Find the Marker
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;" src="./assets/gp.png" alt="">
@@ -105,6 +227,8 @@
 		//////////////////////////////////////////////////////////////////////////////////
 		//		Init
 		//////////////////////////////////////////////////////////////////////////////////
+		var oil, plastic, forest;
+		initForm();
 		document.ontouchmove = function(e) {
 			e.preventDefault();
 		}
@@ -714,6 +838,79 @@
 			}
 
 			return resizedCanvas.toDataURL();
+		}
+
+		function initForm() {
+			// Hide questions to begin with
+			$("#boxyBox").hide();
+			$("#questionTwo").hide();
+			$("#questionThree").hide();
+		}
+
+		function Begin() {
+			$("#calculationBox").hide();
+			$("#boxyBox").fadeIn();
+		}
+
+
+		// Question one's function (oil)
+		function setOilToRange1() {
+			oil = 1;
+			$("#questionOne").hide();
+			$("#questionTwo").fadeIn();
+
+		}
+
+		function setOilToRange2() {
+			oil = 2;
+			$("#questionOne").hide();
+			$("#questionTwo").fadeIn();
+		}
+
+		function setOilToRange3() {
+			oil = 3;
+			$("#questionOne").hide();
+			$("#questionTwo").fadeIn();
+		}
+
+
+		// Question two's function (plastic)
+		function setPlasticToRange1() {
+			plastic = 1;
+			$("#questionTwo").hide();
+			$("#questionThree").fadeIn();
+		}
+
+		function setPlasticToRange2() {
+			plastic = 2;
+			$("#questionTwo").hide();
+			$("#questionThree").fadeIn();
+		}
+
+		function setPlasticToRange3() {
+			plastic = 3;
+			$("#questionTwo").hide();
+			$("#questionThree").fadeIn();
+		}
+
+
+		// Question three's function (forest)
+		function setForestToRange1() {
+			oil = 1;
+			$("#landing").fadeOut();
+			$("#questionThree").fadeOut();
+		}
+
+		function setForestToRange2() {
+			oil = 2;
+			$("#landing").fadeOut();
+			$("#questionThree").fadeOut();
+		}
+
+		function setForestToRange3() {
+			oil = 3;
+			$("#landing").fadeOut();
+			$("#questionThree").fadeOut();
 		}
 	</script>
 </body>
