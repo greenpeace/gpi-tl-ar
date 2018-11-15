@@ -392,7 +392,7 @@
 		scene.add(camera);
 
 		// add lights to scene and dynamic camera based light
-		var ambientLight = new THREE.AmbientLight(0x212223, 6);
+		var ambientLight = new THREE.AmbientLight(0x212223, 8);
 		scene.add(ambientLight);
 		var pointLight = new THREE.DirectionalLight(0xffffff, 4);
 		pointLight.position.set(-.5, -12, 1.5)
@@ -400,7 +400,7 @@
 		scene.add(pointLight);
 		scene.add(pointLight.target);
 
-	  var cameraLight = new THREE.DirectionalLight(0xc4dce5, 4);
+	  var cameraLight = new THREE.DirectionalLight(0xc4dce5, 7.5);
 		camera.add(cameraLight);
 
 		// init renderer
