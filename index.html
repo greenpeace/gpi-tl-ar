@@ -259,15 +259,30 @@
 		let islands = {
 			"island_forest": {
 				position: [-1, 1.4, -1],
-				scale: [0.2, 0.13, 0.13]
+				scale: [0.1, 0.06, 0.06],
+				rotation:{
+					x:0,
+					y:3,
+					z:0
+				}
 			},
 			"island_main": {
 				position: [0, 1, 0],
-				scale: [0.03, 0.03, 0.03]
+				scale: [0.03, 0.03, 0.03],
+				rotation:{
+					x:0,
+					y:3,
+					z:0
+				}
 			},
 			"island_lake": {
 				position: [-1, .7, 1.2],
-				scale: [0.03, 0.03, 0.03]
+				scale: [0.3, 0.3, 0.3],
+				rotation:{
+					x:0,
+					y:0,
+					z:0
+				}
 			}
 		}
 
@@ -531,10 +546,12 @@
 						}
 					})
 					object.scale.set(...islands[islandName].scale)
+					object.rotation.set(islands[islandName].rotation.x,islands[islandName].rotation.y,islands[islandName].rotation.z)
 					object.position.set(...islands[islandName].position) // needs to be an array
 					console.log(islands[islandName].scale, islands[islandName])
 					object.name = islandName
 					arWorldRoot.add(object)
+					//model("island_forest").rotation.set(islands[islandName].rotation.x,islands[islandName].rotation.y,islands[islandName].rotation.z)
 				})
 			})
 		}
