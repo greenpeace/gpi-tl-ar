@@ -225,8 +225,10 @@
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;" src="./assets/gp.png" alt="">
 	</div>
 	<div id="ui">
+		<i class="fab fa-envira" data-size="large"></i>
 		<i class="fab fa-twitter" data-size="large"></i>
 		<i class="fab fa-facebook" data-size="large"></i>
+		<i class="fab fa-shoe-prints" data-size="large"></i>
 	</div>
 	<script>
 		//////////////////////////////////////////////////////////////////////////////////
@@ -240,6 +242,12 @@
 		}) //
 		$(".fa-facebook").click(function() {
 			snappysnap('facebook')
+		})
+		$(".fa-envira").click(function() {
+			hideMyImpact()
+		})
+		$(".fa-shoe-prints").click(function() {
+			showMyImpact()
 		})
 		var date;
 		var orbitRadius = 12;
@@ -789,7 +797,12 @@
 				}
 			}
 		}
-
+		function showMyImpact(){
+			setGrassGreenness(forest);
+		}
+		function hideMyImpact(){
+			etGrassGreenness(1);
+		}
 		function setGrassGreenness(greenness) {
 			model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255;
 			model("island_forest").children[2].material[0].color.g = (69+(186*greenness))/255;
@@ -945,14 +958,14 @@
 
 		// Question three's function (forest)
 		function setForestToRange1() {
-			forest = 1;
+			forest = .6;
 			setGrassGreenness(1);
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
 		}
 
 		function setForestToRange2() {
-			forest = 2;
+			forest = .8;
 			setGrassGreenness(.8);
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
@@ -960,7 +973,7 @@
 
 		function setForestToRange3() {
 			setGrassGreenness(.6);
-			forest = 3;
+			forest = .6;
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
 		}
