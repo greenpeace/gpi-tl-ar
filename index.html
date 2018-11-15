@@ -805,9 +805,11 @@
 		}
 		function showMyImpact(){
 			setGrassGreenness(forest);
+			setWaterClarity(forest)
 		}
 		function hideMyImpact(){
 			setGrassGreenness(1);
+			setWaterClarity(1)
 		}
 		function setGrassGreenness(greenness) {
 			model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255;
@@ -816,10 +818,10 @@
 		}
 
 		function setWaterClarity(clarity) {
-			model("island_lake").children[0].material[3].color.r = 0;
-			model("island_lake").children[0].material[3].color.g = clarity * 0.2;
-			model("island_lake").children[0].material[3].color.b = clarity;
-			model("island_lake").children[0].material[3].opacity = 1 - clarity * .3;
+			model("island_forest").children[0].material[2].color.r = 0;
+			model("island_forest").children[0].material[2].color.g = clarity * 0.2;
+			model("island_forest").children[0].material[2].color.b = clarity;
+			model("island_forest").children[0].material[2].opacity = 1 - clarity * .3;
 		}
 
 		function distanceBetweenTwoPoints(x1, z1, x2, z2) {
@@ -966,6 +968,7 @@
 		function setForestToRange1() {
 			forest = 1;
 			setGrassGreenness(1);
+			setWaterClarity(1)
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
 		}
@@ -973,12 +976,14 @@
 		function setForestToRange2() {
 			forest = .8;
 			setGrassGreenness(.8);
+			setWaterClarity(.8)
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
 		}
 
 		function setForestToRange3() {
 			setGrassGreenness(.6);
+			setWaterClarity(.6)
 			forest = .6;
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
