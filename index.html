@@ -228,7 +228,7 @@
 		<i class="fab fa-envira" data-size="large"></i>
 		<i class="fab fa-twitter" data-size="large"></i>
 		<i class="fab fa-facebook" data-size="large"></i>
-		<i class="fab fa-shoe-prints" data-size="large"></i>
+		<i class="fas fa-shoe-prints" data-size="large"></i>
 	</div>
 	<script>
 		//////////////////////////////////////////////////////////////////////////////////
@@ -801,7 +801,7 @@
 			setGrassGreenness(forest);
 		}
 		function hideMyImpact(){
-			etGrassGreenness(1);
+			setGrassGreenness(1);
 		}
 		function setGrassGreenness(greenness) {
 			model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255;
