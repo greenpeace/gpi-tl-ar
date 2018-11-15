@@ -1,15 +1,15 @@
-# Blender MTL File: 'beech_tree.blend'
+# Blender MTL File: 'tree_beech.blend'
 # Material Count: 2
 
 newmtl Leaves
 Ns 96.078431
 Ka 1.000000 1.000000 1.000000
 Kd 0.017739 0.158455 0.051843
-Ks 0.200000 0.200000 0.200000
+Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
-illum 2
+illum 1
 
 newmtl Trunk
 Ns 96.078431
