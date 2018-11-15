@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
 	<meta name="mobile-web-app-capable" content="yes">
-	<title>AR - fur shurr</title>
+	<title>AR Engagement Tool - GPI Techlab</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 	<link rel="stylesheet" href="./css/bulma.css" />
@@ -259,22 +259,37 @@
 		// island object
 		let islands = {
 			"island_forest": {
-				position: [-1, 1.4, -1],
-				scale: [0.2, 0.13, 0.13],
+				position: [-1, 1.6, -1],
+				scale: [0.06, 0.06, 0.06],
+				rotation: {
+					x: 0,
+					y: 3,
+					z: 0
+				},
 				direction: 1,
 				group: new THREE.Group()  // group for assets like trees
 			},
 			"island_main": {
-				position: [0, 1, 0],
+				position: [1, 1, 0],
 				scale: [0.03, 0.03, 0.03],
+				rotation: {
+					x: 0,
+					y: 3,
+					z: 0
+				},
 				direction: 1,
-				group: new THREE.Group()
+				group: new THREE.Group()  // group for assets like trees
 			},
 			"island_lake": {
-				position: [-1, .7, 1.2],
+				position: [-1, .7, 1],
 				scale: [0.03, 0.03, 0.03],
+				rotation: {
+					x: 0,
+					y: 0,
+					z: 0
+				},
 				direction: 1,
-				group: new THREE.Group()
+				group: new THREE.Group()  // group for assets like trees
 			}
 		}
 
@@ -384,13 +399,16 @@
 		scene.add(camera);
 
 		// add lights to scene and dynamic camera based light
-		var ambientLight = new THREE.AmbientLight(0x212223, 6);
+		var ambientLight = new THREE.AmbientLight(0x212223, 8);
 		scene.add(ambientLight);
 		var pointLight = new THREE.DirectionalLight(0xffffff, 4);
 		pointLight.position.set(-.5, -12, 1.5)
 		pointLight.castShadow = true;
 		scene.add(pointLight);
 		scene.add(pointLight.target);
+
+	  var cameraLight = new THREE.DirectionalLight(0xc4dce5, 7.5);
+		camera.add(cameraLight);
 
 		// init renderer
 		var renderer = new THREE.WebGLRenderer({
@@ -454,7 +472,7 @@
 		var arToolkitContext = new THREEx.ArToolkitContext({
 			cameraParametersUrl: './assets/camera_para.dat',
 			detectionMode: 'mono',
-			maxDetectionRate: 60,
+			maxDetectionRate: 90,
 			canvasWidth: 80 * 3,
 			canvasHeight: 60 * 3,
 		})
@@ -487,8 +505,8 @@
 		var smoothedRoot = new THREE.Group()
 		scene.add(smoothedRoot)
 		var smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
-			lerpPosition: 0.35,
-			lerpQuaternion: 0.18,
+			lerpPosition: 0.25,
+			lerpQuaternion: 0.125,
 			lerpScale: 1,
 		})
 		onRenderFcts.push(function(delta) {
@@ -535,10 +553,12 @@
 						}
 					})
 					object.scale.set(...islands[islandName].scale)
+					object.rotation.set(islands[islandName].rotation.x,islands[islandName].rotation.y,islands[islandName].rotation.z)
 					object.position.set(...islands[islandName].position) // needs to be an array
 					console.log(islands[islandName].scale, islands[islandName])
 					object.name = islandName
 					arWorldRoot.add(object)
+					//model("island_forest").rotation.set(islands[islandName].rotation.x,islands[islandName].rotation.y,islands[islandName].rotation.z)
 				})
 			})
 		}
