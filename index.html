@@ -791,8 +791,8 @@
 		}
 
 		function setGrassGreenness(greenness) {
-			model("island_forest").children[2].material[2].color.r = 1 - greenness;
-			model("island_forest").children[2].material[2].color.b = greenness * .7 + 0.3;
+			model("island_forest").children[2].material[0].color.r = 1 - greenness;
+			model("island_forest").children[2].material[0].color.g = greenness * .7 + 0.3;
 		}
 
 		function setWaterClarity(clarity) {
