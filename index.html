@@ -447,7 +447,7 @@
 		var arToolkitContext = new THREEx.ArToolkitContext({
 			cameraParametersUrl: './assets/camera_para.dat',
 			detectionMode: 'mono',
-			maxDetectionRate: 60,
+			maxDetectionRate: 90,
 			canvasWidth: 80 * 3,
 			canvasHeight: 60 * 3,
 		})
@@ -480,8 +480,8 @@
 		var smoothedRoot = new THREE.Group()
 		scene.add(smoothedRoot)
 		var smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
-			lerpPosition: 0.35,
-			lerpQuaternion: 0.18,
+			lerpPosition: 0.25,
+			lerpQuaternion: 0.125,
 			lerpScale: 1,
 		})
 		onRenderFcts.push(function(delta) {
