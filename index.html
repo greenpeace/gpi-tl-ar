@@ -570,7 +570,7 @@
 			})
 		}
 
-		function loadAssets(assetDirectory, assetName) {
+		function loadAssets(assetDirectory, assetName, position) {
 			/* something like a docstring
 					assetName 					Name of the Asset to load
 					mtlLoader		 				THREE.MTLLoader instance
@@ -596,55 +596,87 @@
 						}
 					})
 					object.scale.set(...trees[assetName].scale)
-					spacefound = false;
-					var calcdx;
-					var calcdz;
-					while (!spacefound) {
-						potentialx = -1.3 + (Math.random());
-						potentialz = -1.8 + (Math.random());
-						if (treeposses.length > 0) {
-							for (var j = 0; j < treeposses.length; j++) {
-								var distance = distanceBetweenTwoPoints(potentialx, treeposses[j].x, potentialz, treeposses[j].z);
-								if (distance > treespacing) {
-									calcdx = potentialx;
-									calcdz = potentialz;
-									spacefound = true;
-									console.log("positionfound!: " + distance)
-								} else {
-									console.log("looking for more space because too small: " + distance)
+					if (position === undefined) {
+					//if (!(trees[assetName].hasOwnProperty("position"))) {
+						spacefound = false;
+						var calcdx;
+						var calcdz;
+						while (!spacefound) {
+							potentialx = -1.3 + (Math.random());
+							potentialz = -1.8 + (Math.random());
+							if (treeposses.length > 0) {
+								for (var j = 0; j < treeposses.length; j++) {
+									var distance = distanceBetweenTwoPoints(potentialx, treeposses[j].x, potentialz, treeposses[j].z);
+									if (distance > treespacing) {
+										calcdx = potentialx;
+										calcdz = potentialz;
+										spacefound = true;
+										console.log("positionfound!: " + distance)
+									} else {
+										console.log("looking for more space because too small: " + distance)
+									}
 								}
+							} else {
+								calcdx = potentialx;
+								calcdz = potentialz;
+								spacefound = true;
 							}
-						} else {
-							calcdx = potentialx;
-							calcdz = potentialz;
-							spacefound = true;
 						}
+						object.position.set(calcdx, 0.4, calcdz)
+						treeposses.push(object.position);
+					} else {
+						console.log(`tree has position ${position}`)
+						object.position.set(...position)
 					}
-					object.position.set(calcdx, 0.4, calcdz)
-					treeposses.push(object.position);
-					console.log(trees[assetName])
 					object.name = assetName
-
 					// add tree to specific group
 					let parent = trees[assetName].parent
+
 					islands[parent].group.children.push(object) // .add no workey?
 					arWorldRoot.add(object)
 				})
 			})
 		}
 
+	//	function loadAssets(assetDirectory, assetName)
+
 		// iterate over all islands
 		Object.keys(islands).forEach(island => {
 			loadIsland("./assets/islands/", island)
 		})
 
+		// create grid for tree placement
+		let grid = createGrid([-1.3, -1.3], [0.2, 0.2], 0.1)
+		let shuffledGrid = shuffle(grid)
+		let forestsize = 10
+
+		shuffledGrid = shuffledGrid.slice(0, forestsize)
+
 		// iterate over all trees
+		let typesOfTrees = Object.keys(trees)
+		let numberOfTrees = typesOfTrees.length
+		let randType
+
+		for (let k = 0; k < shuffledGrid.length; k++) {
+			// create random decision between the trees:
+			randType = Math.floor(Math.random() * numberOfTrees)
+
+			// extract gridposition
+			let [x, z] = shuffledGrid[k]
+
+			// load asset at that position
+			loadAssets("./assets/trees/", typesOfTrees[randType], [x, 0.4, z])
+		/*
 		Object.keys(trees).forEach(tree => {
-			for (var i = 0; i < 5; i++) {
+			for (let k = 0; k < shuffledGrid.length; k++) {
+				console.log(`shuffled grid element ${k} -> ${shuffledGrid[k]}`)
+				let [x, z] = shuffledGrid[k]
+				trees[tree].position = [x, 0.4, z]
 				loadAssets("./assets/trees/", tree)
 			}
 		})
-
+		*/
+		}
 
 		//////////////////////////////////////////////////////////////////////////////////
 		//		render the whole thing on the page
@@ -884,6 +916,36 @@
 			}
 
 			return resizedCanvas.toDataURL();
+		}
+
+		function createGrid(lowerleft, topright, stepsize=-1) {
+			let [x0, y0] = lowerleft
+			let [x1, y1] = topright
+			let grid = []
+
+			if (!(stepsize > 0)) {
+				let diff = x1 - x0
+				stepsize = diff / 100
+			}
+
+			for (let xinc = x0; xinc <= x1; xinc += stepsize) {
+				for (let yinc = y0; yinc <= y1; yinc += stepsize) {
+					grid.push([xinc, yinc])
+				}
+			}
+
+			return grid
+		}
+
+		function shuffle(a) {
+    	let j, x, i
+	    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1))
+        x = a[i]
+        a[i] = a[j]
+        a[j] = x
+	    }
+	    return a
 		}
 
 		function initForm() {
