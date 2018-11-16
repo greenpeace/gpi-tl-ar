@@ -93,6 +93,12 @@
 		.fa-facebook:hover {
 			cursor: pointer;
 		}
+		.fa-envira{
+			color:green;
+		}
+		.fa-shoe-prints{
+			color:white;
+		}
 		.has-bg-img {
 			height: 100%;
 			width:100%;
@@ -225,8 +231,10 @@
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;" src="./assets/gp.png" alt="">
 	</div>
 	<div id="ui">
+		<i class="fab fa-envira" data-size="large"></i>
 		<i class="fab fa-twitter" data-size="large"></i>
 		<i class="fab fa-facebook" data-size="large"></i>
+		<i class="fas fa-shoe-prints" data-size="large"></i>
 	</div>
 	<script>
 		//////////////////////////////////////////////////////////////////////////////////
@@ -240,6 +248,12 @@
 		}) //
 		$(".fa-facebook").click(function() {
 			snappysnap('facebook')
+		})
+		$(".fa-envira").click(function() {
+			hideMyImpact()
+		})
+		$(".fa-shoe-prints").click(function() {
+			showMyImpact()
 		})
 		var date;
 		var orbitRadius = 12;
@@ -407,7 +421,7 @@
 		scene.add(pointLight);
 		scene.add(pointLight.target);
 
-	  var cameraLight = new THREE.DirectionalLight(0xc4dce5, 7.5);
+	  var cameraLight = new THREE.DirectionalLight(0xc4dce5, 4);
 		camera.add(cameraLight);
 
 		// init renderer
@@ -821,17 +835,25 @@
 				}
 			}
 		}
-
+		function showMyImpact(){
+			setGrassGreenness(forest);
+			setWaterClarity(forest)
+		}
+		function hideMyImpact(){
+			setGrassGreenness(1);
+			setWaterClarity(1)
+		}
 		function setGrassGreenness(greenness) {
-			model("island_forest").children[0].material.color.r = 1 - greenness;
-			model("island_forest").children[0].material.color.g = greenness * .7 + 0.3;
+			model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255;
+			model("island_forest").children[2].material[0].color.g = (69+(186*greenness))/255;
+			model("island_forest").children[2].material[0].color.b = (19-(19*greenness))/255;
 		}
 
 		function setWaterClarity(clarity) {
-			model("island_lake").children[0].material[3].color.r = 0;
-			model("island_lake").children[0].material[3].color.g = clarity * 0.2;
-			model("island_lake").children[0].material[3].color.b = clarity;
-			model("island_lake").children[0].material[3].opacity = 1 - clarity * .3;
+			model("island_forest").children[0].material[2].color.r = 0;
+			model("island_forest").children[0].material[2].color.g = clarity * 0.2;
+			model("island_forest").children[0].material[2].color.b = clarity;
+			model("island_forest").children[0].material[2].opacity = 1 - clarity * .3;
 		}
 
 		function distanceBetweenTwoPoints(x1, z1, x2, z2) {
@@ -1006,19 +1028,25 @@
 
 		// Question three's function (forest)
 		function setForestToRange1() {
-			oil = 1;
+			forest = 1;
+			setGrassGreenness(1);
+			setWaterClarity(1)
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
 		}
 
 		function setForestToRange2() {
-			oil = 2;
+			forest = .8;
+			setGrassGreenness(.8);
+			setWaterClarity(.8)
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
 		}
 
 		function setForestToRange3() {
-			oil = 3;
+			setGrassGreenness(.6);
+			setWaterClarity(.6)
+			forest = .6;
 			$("#landing").fadeOut();
 			$("#questionThree").fadeOut();
 		}
