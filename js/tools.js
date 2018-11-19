@@ -205,3 +205,96 @@ function captureVideoFrame(video, format, width, height) {
     height: canvas.height
   }
 }
+
+function loadAsset(propsObject, assetDirectory, assetName, position) {
+  /**
+    * something like a docstring
+
+    * propsObject         JS object that contains props, like islands, trees.
+    * assetName 					Name of the Asset to load
+    * mtlLoader		 				THREE.MTLLoader instance
+    * islandDirectory			str, path to directory that contains .mtl, .obj
+    * islandName					str, the name of the island files
+    * positions						array of length 3, containing xyz coords for placement
+  **/
+  let props = ['scale', 'rotation', 'position']
+
+  mtlLoader.setTexturePath(assetDirectory)
+  mtlLoader.setPath(assetDirectory)
+  // load material
+  mtlLoader.load(assetName + ".mtl", materials => {
+    materials.preload();
+    let objLoader = new THREE.OBJLoader();
+    objLoader.setMaterials(materials)
+    objLoader.setPath(assetDirectory)
+    // load object
+    objLoader.load(assetName + ".obj", object => {
+      console.log(`currently loading ${assetName}`)
+      console.log(object)
+      object.traverse(node => {
+        if (node instanceof THREE.Mesh) {
+          node.geometry.computeVertexNormals()
+        }
+      })
+
+    console.log(assetName, typeof assetName)
+    if (assetName.includes("tree")) { // tree branch of condition --------------
+      if (position === undefined) {
+        spacefound = false
+        let calcdx, calcdz
+        while (!spacefound) {
+          potentialx = -1.3 + (Math.random())
+          potentialz = -1.8 + (Math.random())
+          if (treeposses.length > 0) {
+            for (var j = 0; j < treeposses.length; j++) {
+              let distance = distanceBetweenTwoPoints(potentialx, treeposses[j].x, potentialz, treeposses[j].z)
+
+              if (distance > treespacing) {
+                calcdx = potentialx
+                calcdz = potentialz
+                spacefound = true
+                console.log("positionfound!: " + distance)
+              } else {
+                console.log("looking for more space because too small: " + distance)
+              }
+            }
+          } else {
+            calcdx = potentialx
+            calcdz = potentialz
+            spacefound = true
+          }
+        }
+        // NOTE: 0.4 seems a bit arbitrary here
+        object.position.set(calcdx, 0.4, calcdz)
+        treeposses.push(object.position)
+      } else {
+        console.log(`tree has position ${position}`)
+        object.position.set(...position)
+      }
+      // set tree scaling
+      object.scale.set(...propsObject[assetName].scale)
+
+      // add name
+      object.name = assetName
+
+      // add tree to specific group
+      let parent = trees[assetName].parent
+      islands[parent].group.children.push(object) // .add no workey?
+
+    } else { // island branch of condition -------------------------------------
+      props.forEach( prop => {
+        if (prop !== "rotation") {
+          object[prop].set(...propsObject[assetName][prop])
+        } else {
+          object.rotation.set(...Object.values(propsObject[assetName].rotation))
+        }
+        // add name
+        object.name = assetName
+      })
+    }
+    // add to the AR world
+    arWorldRoot.add(object)
+
+    })
+  })
+}

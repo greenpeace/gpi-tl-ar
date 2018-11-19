@@ -165,7 +165,7 @@
 		///////////////////////////////////////////////////////////////////////////
 		/////								  			Init																			/////
 		///////////////////////////////////////////////////////////////////////////
-		let oil, plastic, forest;
+		let oil, plastic, forest
 		let pollutionIndicators = {
 			"oil": {
 				"range": 0
@@ -194,10 +194,8 @@
 		$(".fa-shoe-prints").click(function() {
 			showMyImpact()
 		})
-		var date;
-		var orbitRadius = 12;
-		//var treeposses = [];
-		//var treespacing = 0.8;
+		var date
+		var orbitRadius = 12
 
 		// array of functions for the rendering loop
 		var onRenderFcts = [];
@@ -205,6 +203,7 @@
 		// init scene and camera
 		var scene = new THREE.Scene();
 
+		// TODO: move to tools?
 		function base64ToBlob(base64, mime) {
 			console.log("inblobber");
 			mime = mime || '';
@@ -230,6 +229,7 @@
 			});
 		}
 
+		// TODO: move to tools?
 		// called by snap-button, takes a screenshot of video and canvas
 		function snappysnap(platform) {
 			// save frame from video, i.e. camera
@@ -432,123 +432,11 @@
 		var sphere = new THREE.Mesh(geometry, material);
 		arWorldRoot.add(sphere);
 
-		let mtlLoader = new THREE.MTLLoader();
-		//let objLoader = new THREE.OBJLoader();
+		let mtlLoader = new THREE.MTLLoader()  // initiate material loader
 
-		function loadIsland(islandDirectory, islandName) {
-			/* something like a docstring
-					islandDirectory			str, path to directory that contains .mtl, .obj
-					islandName					str, the name of the island files
-					positions						array of length 3, containing xyz coords for placement
-			*/
-			mtlLoader.setTexturePath(islandDirectory)
-			mtlLoader.setPath(islandDirectory)
-			// load material
-			mtlLoader.load(islandName + ".mtl", materials => {
-				materials.preload()
-				let objLoader = new THREE.OBJLoader();
-				objLoader.setMaterials(materials)
-				objLoader.setPath(islandDirectory)
-				// load object
-				objLoader.load(islandName + ".obj", object => {
-					console.log(`currently loading ${islandName}`)
-					console.log(object)
-					object.traverse(node => {
-						if (node instanceof THREE.Mesh) {
-							node.geometry.computeVertexNormals()
-						}
-					})
-					object.scale.set(...islands[islandName].scale)
-					object.rotation.set(islands[islandName].rotation.x,islands[islandName].rotation.y,islands[islandName].rotation.z)
-					object.position.set(...islands[islandName].position) // needs to be an array
-					console.log(islands[islandName].scale, islands[islandName])
-					object.name = islandName
-					arWorldRoot.add(object)
-					//model("island_forest").rotation.set(islands[islandName].rotation.x,islands[islandName].rotation.y,islands[islandName].rotation.z)
-				})
-			})
-		}
-
-		function loadTreesOnForestIsland(assetDirectory, treesHolder, nr) {
-			var loadedTrees = [];
-			Object.keys(trees).forEach(tree => {
-				console.log(tree);
-			})
-		}
-
-		function loadAssets(assetDirectory, assetName, position) {
-			/* something like a docstring
-					assetName 					Name of the Asset to load
-					mtlLoader		 				THREE.MTLLoader instance
-					islandDirectory			str, path to directory that contains .mtl, .obj
-					islandName					str, the name of the island files
-					positions						array of length 3, containing xyz coords for placement
-			*/
-			mtlLoader.setTexturePath(assetDirectory)
-			mtlLoader.setPath(assetDirectory)
-			// load material
-			mtlLoader.load(assetName + ".mtl", materials => {
-				materials.preload();
-				let objLoader = new THREE.OBJLoader();
-				objLoader.setMaterials(materials)
-				objLoader.setPath(assetDirectory)
-				// load object
-				objLoader.load(assetName + ".obj", object => {
-					console.log(`currently loading ${assetName}`)
-					console.log(object)
-					object.traverse(node => {
-						if (node instanceof THREE.Mesh) {
-							node.geometry.computeVertexNormals()
-						}
-					})
-					object.scale.set(...trees[assetName].scale)
-					if (position === undefined) {
-					//if (!(trees[assetName].hasOwnProperty("position"))) {
-						spacefound = false;
-						var calcdx;
-						var calcdz;
-						while (!spacefound) {
-							potentialx = -1.3 + (Math.random());
-							potentialz = -1.8 + (Math.random());
-							if (treeposses.length > 0) {
-								for (var j = 0; j < treeposses.length; j++) {
-									var distance = distanceBetweenTwoPoints(potentialx, treeposses[j].x, potentialz, treeposses[j].z);
-									if (distance > treespacing) {
-										calcdx = potentialx;
-										calcdz = potentialz;
-										spacefound = true;
-										console.log("positionfound!: " + distance)
-									} else {
-										console.log("looking for more space because too small: " + distance)
-									}
-								}
-							} else {
-								calcdx = potentialx;
-								calcdz = potentialz;
-								spacefound = true;
-							}
-						}
-						object.position.set(calcdx, 0.4, calcdz)
-						treeposses.push(object.position);
-					} else {
-						console.log(`tree has position ${position}`)
-						object.position.set(...position)
-					}
-					object.name = assetName
-					// add tree to specific group
-					let parent = trees[assetName].parent
-
-					islands[parent].group.children.push(object) // .add no workey?
-					arWorldRoot.add(object)
-				})
-			})
-		}
-
-	//	function loadAssets(assetDirectory, assetName)
-
-		// iterate over all islands
+		// iterate over all islands -----------------------------------------------
 		Object.keys(islands).forEach(island => {
-			loadIsland("./assets/islands/", island)
+			loadAsset(islands, "./assets/islands/", island)
 		})
 
 		// create grid for tree placement
@@ -563,7 +451,7 @@
 		let numberOfTrees = typesOfTrees.length
 		let randType
 
-		for (let k = 0; k < shuffledGrid.length; k++) {
+		for (let k = 0; k < shuffledGrid.length; k++) { // tree creation ----------
 			// create random decision between the trees:
 			randType = Math.floor(Math.random() * numberOfTrees)
 
@@ -571,7 +459,7 @@
 			let [x, z] = shuffledGrid[k]
 
 			// load asset at that position
-			loadAssets("./assets/trees/", typesOfTrees[randType], [x, 0.4, z])
+			loadAsset(trees, "./assets/trees/", typesOfTrees[randType], [x, 0.4, z])
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////
