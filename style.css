@@ -1,0 +1,83 @@
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-x: hidden;
+}
+body {
+  position: relative;
+}
+#blinds {
+    font-family: "Courier New";
+    text-align: center;
+    font-size: 6vw;
+    color: white
+}
+
+#blinds:before {
+    content: "";
+    display: inline-block;
+    height: 75%;
+    vertical-align: middle;
+}
+#landing{
+    height: 100%;
+    width:100%;
+    position: absolute;
+    background: rgba(100,100,100,1);
+    z-index: 4;
+}
+#ui {
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.4);
+    margin: 0;
+    bottom: 0;
+    letter-spacing: 10px;
+}
+
+.fab {
+    font-size: 40px;
+    line-height: 45px;
+    margin-bottom: 20px;
+    margin-right: 20px;
+}
+
+.fa-twitter {
+    color: #00aced;
+}
+
+.fa-twitter:hover {
+    cursor: pointer;
+}
+
+.fa-facebook {
+    color: #3b5998;
+}
+
+.fa-facebook:hover {
+    cursor: pointer;
+}
+.fa-envira{
+    color:green;
+}
+.fa-shoe-prints{
+    color:white;
+}
+.has-bg-img {
+    height: 100%;
+    width:100%;
+background: url('issland.jpg');
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+
+}
+canvas {
+    z-index: -1
+}

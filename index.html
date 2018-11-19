@@ -28,98 +28,18 @@
 
 	<!-- custom javascript tools -->
 	<script src="./js/tools.js"></script>
-	<!-- asset related json files -->
-	<script src="./assets/islands/islands.json"></script>
-	<script src="./assets/trees/trees.json"></script>
+	<!-- asset related json objects as variables in these scripts -->
+	<!-- editorial note: I hate JavaScript -->
+	<script src="./js/islands.js"></script>
+	<script src="./js/trees.js"></script>
 
 	<script>
 		THREEx.ArToolkitContext.baseURL = './'
 	</script>
-	<style media="screen">
-		html,
-		body {
-			margin: 0;
-			width: 100%;
-			height: 100%;
-			overflow: hidden;
-			overflow-x: hidden;
-		}
-		body {
-		  position: relative;
-		}
-		#blinds {
-			font-family: "Courier New";
-			text-align: center;
-			font-size: 6vw;
-			color: white
-		}
 
-		#blinds:before {
-			content: "";
-			display: inline-block;
-			height: 75%;
-			vertical-align: middle;
-		}
-		#landing{
-			height: 100%;
-			width:100%;
-			position: absolute;
-			background: rgba(100,100,100,1);
-			z-index: 4;
-		}
-		#ui {
-			width: 100%;
-			height: 50px;
-			position: absolute;
-			text-align: center;
-			background: rgba(0, 0, 0, 0.4);
-			margin: 0;
-			bottom: 0;
-			letter-spacing: 10px;
-		}
-
-		.fab {
-			font-size: 40px;
-			line-height: 45px;
-			margin-bottom: 20px;
-			margin-right: 20px;
-		}
-
-		.fa-twitter {
-			color: #00aced;
-		}
-
-		.fa-twitter:hover {
-			cursor: pointer;
-		}
-
-		.fa-facebook {
-			color: #3b5998;
-		}
-
-		.fa-facebook:hover {
-			cursor: pointer;
-		}
-		.fa-envira{
-			color:green;
-		}
-		.fa-shoe-prints{
-			color:white;
-		}
-		.has-bg-img {
-			height: 100%;
-			width:100%;
-	    background: url('issland.jpg');
-	    -webkit-background-size: cover;
-	    -moz-background-size: cover;
-	    -o-background-size: cover;
-	    background-size: cover;
-
-	  }
-		canvas {
-			z-index: -1
-		}
-	</style>
+	<!-- external CSS style sheet -->
+	<link rel="stylesheet" type="text/css" href="style.css" media="screen">
+	
 
 </head>
 
@@ -266,6 +186,7 @@
 		var orbitRadius = 12;
 		var treeposses = [];
 		var treespacing = 0.8;
+		/*
 		var trees = {
 			"beech_tree": {
 				parent: "island_forest",
@@ -278,6 +199,7 @@
 		}
 
 		// island object
+		/*
 		let islands = {
 			"island_forest": {
 				position: [-1, 1.6, -1],
@@ -313,6 +235,7 @@
 				group: new THREE.Group()  // group for assets like trees
 			}
 		}
+		*/
 
 		// array of functions for the rendering loop
 		var onRenderFcts = [];
