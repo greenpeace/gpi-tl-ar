@@ -9,6 +9,13 @@ function initForm() {
   $("#questionThree").hide()
 }
 
+function Begin() {
+  $("#formtitle").hide()
+  $("#description").hide()
+  $("#calculationBox").hide()
+  $("#boxyBox").fadeIn()
+}
+
 function setRange(asset, value, hide, fadeIn, fadeOut) {
   /**
     * Set the range for pollution indicators oil, plastic and forest.
@@ -45,9 +52,51 @@ function setRange(asset, value, hide, fadeIn, fadeOut) {
   }
 }
 
+function setGrassGreenness(greenness) {
+  /**
+    * setting the rgb values of the grass material manually using greenness
+  **/
+  model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255;
+  model("island_forest").children[2].material[0].color.g = (69+(186*greenness))/255;
+  model("island_forest").children[2].material[0].color.b = (19-(19*greenness))/255;
+}
+
+function setWaterClarity(clarity) {
+  /**
+    * setting rgb + opacity values of water material manually using clarity
+  **/
+  model("island_forest").children[0].material[2].color.r = 0;
+  model("island_forest").children[0].material[2].color.g = clarity * 0.2;
+  model("island_forest").children[0].material[2].color.b = clarity;
+  model("island_forest").children[0].material[2].opacity = 1 - clarity * .3;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////                       DOM-related stuff                                ////
+////////////////////////////////////////////////////////////////////////////////
+
+function model(name) {
+  /**
+    * return the DOM-element with given name.
+  **/
+  for (var i = 0; i < arWorldRoot.children.length; i++) {
+    if (arWorldRoot.children[i].name == name) {
+      return arWorldRoot.children[i];
+    }
+  }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 ////                  Algorithmic/Computational stuff                       ////
 ////////////////////////////////////////////////////////////////////////////////
+
+function distanceBetweenTwoPoints(x1, z1, x2, z2) {
+  /**
+    * Euclidian distance between two points (x1, z1), (x2, z2)
+  **/
+  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(z2 - z1, 2));
+}
 
 function createGrid(bottomleft, topright, stepsize=-1) {
   /**

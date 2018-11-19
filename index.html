@@ -684,6 +684,32 @@
 		///////////////////////////////////////////////////////////////////////////
 		// 										 	CUSTOM FUNCTIONS 																 //
 		///////////////////////////////////////////////////////////////////////////
+		function showMyImpact(){
+			/**
+				* set all functions/values to show the humans impact here
+			**/
+			setGrassGreenness(pollutionIndicators.forest)
+			setWaterClarity(pollutionIndicators.forest)
+		}
+		function hideMyImpact(){
+			/**
+				* revert all values to default/idyllic values
+			**/
+			setGrassGreenness(1)
+			setWaterClarity(1)
+		}
+
+		// NOTE: Legacy code below, left for now ----------------------------------
+		/*
+		function findMat(iname, tname) {
+		  materials = model(iname).children[0].material;
+		  for (var x = 0; x < materials.length; x++) {
+		    if (materials[x].name == tname) {
+		      return materials[x]
+		    }
+		  }
+		}
+
 		function animate() {
 			console.log("placeholder function cause gabe forgot")
 		}
@@ -697,54 +723,8 @@
 				}
 			}
 		}
-		function showMyImpact(){
-			setGrassGreenness(pollutionIndicators.forest)
-			setWaterClarity(pollutionIndicators.forest)
-		}
-		function hideMyImpact(){
-			setGrassGreenness(1)
-			setWaterClarity(1)
-		}
-		function setGrassGreenness(greenness) {
-			model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255;
-			model("island_forest").children[2].material[0].color.g = (69+(186*greenness))/255;
-			model("island_forest").children[2].material[0].color.b = (19-(19*greenness))/255;
-		}
+		*/
 
-		function setWaterClarity(clarity) {
-			model("island_forest").children[0].material[2].color.r = 0;
-			model("island_forest").children[0].material[2].color.g = clarity * 0.2;
-			model("island_forest").children[0].material[2].color.b = clarity;
-			model("island_forest").children[0].material[2].opacity = 1 - clarity * .3;
-		}
-
-		function distanceBetweenTwoPoints(x1, z1, x2, z2) {
-			return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(z2 - z1, 2));
-		}
-
-		function model(name) {
-			for (var i = 0; i < arWorldRoot.children.length; i++) {
-				if (arWorldRoot.children[i].name == name) {
-					return arWorldRoot.children[i];
-				}
-			}
-		}
-
-		function findMat(iname, tname) {
-			materials = model(iname).children[0].material;
-			for (var x = 0; x < materials.length; x++) {
-				if (materials[x].name == tname) {
-					return materials[x]
-				}
-			}
-		}
-
-		function Begin() {
-			$("#formtitle").hide();
-			$("#description").hide();
-			$("#calculationBox").hide();
-			$("#boxyBox").fadeIn();
-		}
 	</script>
 </body>
 
