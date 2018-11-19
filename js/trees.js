@@ -1,3 +1,6 @@
+let treeposses = []
+let treespacing = 0.8
+
 let trees = {
     "beech_tree": {
         "parent": "island_forest",

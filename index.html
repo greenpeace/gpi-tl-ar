@@ -39,7 +39,6 @@
 
 	<!-- external CSS style sheet -->
 	<link rel="stylesheet" type="text/css" href="style.css" media="screen">
-	
 
 </head>
 
@@ -55,8 +54,6 @@
 
 						<h2 class="subtitle has-text-white">
 							<b id="description">Estimate your personal carbon footprint and see what plausible impact it has on floating islands, in terms of deforestation and plastic and oil consumption.<br><br></b>
-
-
 
 							<!-- button to begin calculation of footprint -->
 							<a class="button is-primary has-text-dark" id="calculationBox" onclick="Begin()">
@@ -74,25 +71,23 @@
 								</p>
 								<div class="columns">
 									<p class="control column">
-										<a class="button is-success" onclick="setOilToRange1()">
+										<a class="button is-success" onclick="setRange('oil', 1, 'questionOne', 'questionTwo')">
+
 											0-10 hours
 										</a>
 									</p>
 									<p class="control column">
-										<a class="button is-warning" onclick="setOilToRange2()">
+										<a class="button is-warning" onclick="setRange('oil', 2, 'questionOne', 'questionTwo')">
 											10-20 hours
 										</a>
 									</p>
 									<p class="control column">
-										<a class="button is-danger" onclick="setOilToRange3()">
+										<a class="button is-danger" onclick="setRange('oil', 3, 'questionOne', 'questionTwo')">
 											20+ hours
 										</a>
 									</p>
 								</div>
 							</div>
-
-
-
 
 							<!-- Question Two - Plastic -->
 							<!-- <div class="box hidden"   > -->
@@ -103,23 +98,22 @@
 								</p>
 								<div class="columns">
 									<p class="control column">
-										<a class="button is-success" onclick="setPlasticToRange1()">
+										<a class="button is-success" onclick="setRange('plastic', 1, 'questionTwo', 'questionThree')">
 											0-10 items
 										</a>
 									</p>
 									<p class="control column">
-										<a class="button is-warning" onclick="setPlasticToRange2()">
+										<a class="button is-warning" onclick="setRange('plastic', 2, 'questionTwo', 'questionThree')">
 											10-20 items
 										</a>
 									</p>
 									<p class="control column">
-										<a class="button is-danger" onclick="setPlasticToRange3()">
+										<a class="button is-danger" onclick="setRange('plastic', 3, 'questionTwo', 'questionThree')">
 											20+ items
 										</a>
 									</p>
 								</div>
 							</div>
-
 
 							<!-- Question Three - Oil -->
 							<!-- <div class="box hidden"> -->
@@ -131,17 +125,17 @@
 
 								<div class="columns">
 									<p class="control column">
-										<a class="button is-success" onclick="setForestToRange1()">
+										<a class="button is-success" onclick="setRange('forest', 1, [], [], ['landing', 'questionThree'])">
 											Vegan/Vegetarian
 										</a>
 									</p>
 									<p class="control column">
-										<a class="button is-warning" onclick="setForestToRange2()">
+										<a class="button is-warning" onclick="setRange('forest', 0.8, [], [], ['landing', 'questionThree'])">
 											I eat meat rarely
 										</a>
 									</p>
 									<p class="control column">
-										<a class="button is-danger" onclick="setForestToRange3()">
+										<a class="button is-danger" onclick="setRange('forest', 0.6, [], [], ['landing', 'questionThree'])">
 											I eat meat everyday
 										</a>
 									</p>
@@ -153,10 +147,14 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- overlay -->
 	<div id="blinds" style="position:absolute;margin:0;width:100%;height:100%;background:rgba(0,0,0,0.7);line-height:100%;top:0">
 		Find the Marker
 		<img style="position:absolute;width:120px;height:120px;margin-left:-60px;margin-top:-10px;left:50%;top:50%;" src="./assets/gp.png" alt="">
 	</div>
+
+	<!-- buttons at the bottom -->
 	<div id="ui">
 		<i class="fab fa-envira" data-size="large"></i>
 		<i class="fab fa-twitter" data-size="large"></i>
@@ -164,11 +162,25 @@
 		<i class="fas fa-shoe-prints" data-size="large"></i>
 	</div>
 	<script>
-		//////////////////////////////////////////////////////////////////////////////////
-		//		Init
-		//////////////////////////////////////////////////////////////////////////////////
-		var oil, plastic, forest;
-		initForm();
+		///////////////////////////////////////////////////////////////////////////
+		/////								  			Init																			/////
+		///////////////////////////////////////////////////////////////////////////
+		let oil, plastic, forest;
+		let pollutionIndicators = {
+			"oil": {
+				"range": 0
+			},
+			"plastic": {
+				"range": 0
+			},
+			"forest": {
+				"range": 0,
+				"impact": [setGrassGreenness, setWaterClarity]
+			}
+		}
+
+		initForm();  // Hide boxes and questions 2,3
+
 		document.body.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
 		$(".fa-twitter").click(function() {
 			snappysnap('twitter')
@@ -184,58 +196,8 @@
 		})
 		var date;
 		var orbitRadius = 12;
-		var treeposses = [];
-		var treespacing = 0.8;
-		/*
-		var trees = {
-			"beech_tree": {
-				parent: "island_forest",
-				scale: [0.02, 0.02, 0.02]
-			},
-			"pine_tree": {
-				parent: "island_forest",
-				scale: [0.03, 0.065, 0.03]
-			}
-		}
-
-		// island object
-		/*
-		let islands = {
-			"island_forest": {
-				position: [-1, 1.6, -1],
-				scale: [0.06, 0.06, 0.06],
-				rotation: {
-					x: 0,
-					y: 3,
-					z: 0
-				},
-				direction: 1,
-				group: new THREE.Group()  // group for assets like trees
-			},
-			"island_main": {
-				position: [1, 1, 0],
-				scale: [0.03, 0.03, 0.03],
-				rotation: {
-					x: 0,
-					y: 3,
-					z: 0
-				},
-				direction: 1,
-				group: new THREE.Group()  // group for assets like trees
-			},
-			"island_lake": {
-				position: [-1, .7, 1],
-				scale: [0.03, 0.03, 0.03],
-				rotation: {
-					x: 0,
-					y: 0,
-					z: 0
-				},
-				direction: 1,
-				group: new THREE.Group()  // group for assets like trees
-			}
-		}
-		*/
+		//var treeposses = [];
+		//var treespacing = 0.8;
 
 		// array of functions for the rendering loop
 		var onRenderFcts = [];
@@ -610,16 +572,6 @@
 
 			// load asset at that position
 			loadAssets("./assets/trees/", typesOfTrees[randType], [x, 0.4, z])
-		/*
-		Object.keys(trees).forEach(tree => {
-			for (let k = 0; k < shuffledGrid.length; k++) {
-				console.log(`shuffled grid element ${k} -> ${shuffledGrid[k]}`)
-				let [x, z] = shuffledGrid[k]
-				trees[tree].position = [x, 0.4, z]
-				loadAssets("./assets/trees/", tree)
-			}
-		})
-		*/
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////
@@ -631,14 +583,6 @@
 			renderer.render(scene, camera);
 		})
 
-		// object foo
-		/*
-		let islandDirections = {
-			"island_forest": 1,
-			"island_main": 1,
-			"island_lake": 1
-		}
-		*/
 		// run the rendering loop
 		var lastTimeMsec = null
 		requestAnimationFrame(function animate(nowMsec) {
@@ -694,16 +638,6 @@
 								islandModel.position.y + 0.001 * dir,
 							  tree.position.z)
 						})
-						// old code snipped below
-						/*
-						for (var i = 0; i < arWorldRoot.children.length; i++) {
-							if (arWorldRoot.children[i].name.includes("tree")) {
-								arWorldRoot.children[i].position.set(arWorldRoot.children[i].position.x,
-									islandModel.position.y + 0.001 * dir,
-									arWorldRoot.children[i].position.z)
-							}
-						}
-						*/
 						break;
 
 					case "island_main":
@@ -745,7 +679,6 @@
 				Math.sin(date) * orbitRadius,
 				Math.sin(date) * orbitRadius
 			);
-			//console.log(pointLight.position);
 		})
 
 		///////////////////////////////////////////////////////////////////////////
@@ -755,7 +688,6 @@
 			console.log("placeholder function cause gabe forgot")
 		}
 		//Island Deleter
-		//NOTE: does this need 'name' as a parameter?
 		function deleteIslands() {
 			for (var i = 0; i < arWorldRoot.children.length; i++) {
 				if (arWorldRoot.children[i].name) {
@@ -766,11 +698,11 @@
 			}
 		}
 		function showMyImpact(){
-			setGrassGreenness(forest);
-			setWaterClarity(forest)
+			setGrassGreenness(pollutionIndicators.forest)
+			setWaterClarity(pollutionIndicators.forest)
 		}
 		function hideMyImpact(){
-			setGrassGreenness(1);
+			setGrassGreenness(1)
 			setWaterClarity(1)
 		}
 		function setGrassGreenness(greenness) {
@@ -806,179 +738,12 @@
 				}
 			}
 		}
-		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-395911581
-		function captureVideoFrame(video, format, width, height) {
-			if (typeof video === 'string') {
-				video = document.querySelector(video)
-			}
-
-			format = format || 'jpeg'
-
-			if (!video || (format !== 'png' && format !== 'jpeg')) {
-				return false
-			}
-
-			let canvas = document.createElement("CANVAS")
-
-			canvas.width = width || video.videoWidth
-			canvas.height = height || video.videoHeight
-			canvas.getContext('2d').drawImage(video, 0, 0)
-			let dataUri = canvas.toDataURL('image/' + format)
-			let data = dataUri.split(',')[1]
-			let mimeType = dataUri.split(';')[0].slice(5)
-
-			let bytes = window.atob(data)
-			let buf = new ArrayBuffer(bytes.length)
-			let arr = new Uint8Array(buf)
-
-			for (let i = 0; i < bytes.length; i++) {
-				arr[i] = bytes.charCodeAt(i)
-			}
-
-			let blob = new Blob([arr], {
-				type: mimeType
-			})
-			return {
-				blob: blob,
-				dataUri: dataUri,
-				format: format,
-				width: canvas.width,
-				height: canvas.height
-			}
-		}
-
-		// stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-404543089
-		function resizeCanvas(origCanvas, width, height) {
-			let resizedCanvas = document.createElement("canvas");
-			let resizedContext = resizedCanvas.getContext("2d");
-
-			resizedCanvas.height = height;
-			resizedCanvas.width = width;
-
-			if (width > height) {
-				// Landscape
-				resizedContext.drawImage(origCanvas, 0, 0, width, height);
-			} else {
-				// Portrait
-				var scale = height / width;
-				var scaledHeight = origCanvas.width * scale;
-				var scaledWidth = origCanvas.height * scale;
-				var marginLeft = (origCanvas.width - scaledWidth) / 2;
-				resizedContext.drawImage(origCanvas, marginLeft, 0, scaledWidth, scaledHeight);
-			}
-
-			return resizedCanvas.toDataURL();
-		}
-
-		function createGrid(lowerleft, topright, stepsize=-1) {
-			let [x0, y0] = lowerleft
-			let [x1, y1] = topright
-			let grid = []
-
-			if (!(stepsize > 0)) {
-				let diff = x1 - x0
-				stepsize = diff / 100
-			}
-
-			for (let xinc = x0; xinc <= x1; xinc += stepsize) {
-				for (let yinc = y0; yinc <= y1; yinc += stepsize) {
-					grid.push([xinc, yinc])
-				}
-			}
-
-			return grid
-		}
-
-		function shuffle(a) {
-    	let j, x, i
-	    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1))
-        x = a[i]
-        a[i] = a[j]
-        a[j] = x
-	    }
-	    return a
-		}
-
-		function initForm() {
-			// Hide questions to begin with
-			$("#boxyBox").hide();
-			$("#questionTwo").hide();
-			$("#questionThree").hide();
-		}
 
 		function Begin() {
 			$("#formtitle").hide();
 			$("#description").hide();
 			$("#calculationBox").hide();
 			$("#boxyBox").fadeIn();
-		}
-
-
-		// Question one's function (oil)
-		function setOilToRange1() {
-			oil = 1;
-			$("#questionOne").hide();
-			$("#questionTwo").fadeIn();
-
-		}
-
-		function setOilToRange2() {
-			oil = 2;
-			$("#questionOne").hide();
-			$("#questionTwo").fadeIn();
-		}
-
-		function setOilToRange3() {
-			oil = 3;
-			$("#questionOne").hide();
-			$("#questionTwo").fadeIn();
-		}
-
-
-		// Question two's function (plastic)
-		function setPlasticToRange1() {
-			plastic = 1;
-			$("#questionTwo").hide();
-			$("#questionThree").fadeIn();
-		}
-
-		function setPlasticToRange2() {
-			plastic = 2;
-			$("#questionTwo").hide();
-			$("#questionThree").fadeIn();
-		}
-
-		function setPlasticToRange3() {
-			plastic = 3;
-			$("#questionTwo").hide();
-			$("#questionThree").fadeIn();
-		}
-
-
-		// Question three's function (forest)
-		function setForestToRange1() {
-			forest = 1;
-			setGrassGreenness(1);
-			setWaterClarity(1)
-			$("#landing").fadeOut();
-			$("#questionThree").fadeOut();
-		}
-
-		function setForestToRange2() {
-			forest = .8;
-			setGrassGreenness(.8);
-			setWaterClarity(.8)
-			$("#landing").fadeOut();
-			$("#questionThree").fadeOut();
-		}
-
-		function setForestToRange3() {
-			setGrassGreenness(.6);
-			setWaterClarity(.6)
-			forest = .6;
-			$("#landing").fadeOut();
-			$("#questionThree").fadeOut();
 		}
 	</script>
 </body>
