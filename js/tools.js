@@ -31,8 +31,8 @@ function setRange(asset, value, hide, fadeIn, fadeOut) {
   // input sanitizing
   let args = [hide, fadeIn, fadeOut]
   for (let i = 0; i < args.length; i++) {
-    if (args[i] !== undefined) {
-      args[i] = typeof args[i] !== "object" ? [args[i]] : args[i]
+    if (args[i] != undefined) {
+      args[i] = typeof args[i] != "object" ? [args[i]] : args[i]
     } else {
       args[i] = []
     }
@@ -56,19 +56,19 @@ function setGrassGreenness(greenness) {
   /**
     * setting the rgb values of the grass material manually using greenness
   **/
-  model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255;
-  model("island_forest").children[2].material[0].color.g = (69+(186*greenness))/255;
-  model("island_forest").children[2].material[0].color.b = (19-(19*greenness))/255;
+  model("island_forest").children[2].material[0].color.r = (139 - (greenness*139))/255
+  model("island_forest").children[2].material[0].color.g = (69+(186*greenness))/255
+  model("island_forest").children[2].material[0].color.b = (19-(19*greenness))/255
 }
 
 function setWaterClarity(clarity) {
   /**
     * setting rgb + opacity values of water material manually using clarity
   **/
-  model("island_forest").children[0].material[2].color.r = 0;
-  model("island_forest").children[0].material[2].color.g = clarity * 0.2;
-  model("island_forest").children[0].material[2].color.b = clarity;
-  model("island_forest").children[0].material[2].opacity = 1 - clarity * .3;
+  model("island_forest").children[0].material[2].color.r = 0
+  model("island_forest").children[0].material[2].color.g = clarity * 0.2
+  model("island_forest").children[0].material[2].color.b = clarity
+  model("island_forest").children[0].material[2].opacity = 1 - clarity * .3
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ function model(name) {
   **/
   for (var i = 0; i < arWorldRoot.children.length; i++) {
     if (arWorldRoot.children[i].name == name) {
-      return arWorldRoot.children[i];
+      return arWorldRoot.children[i]
     }
   }
 }
@@ -95,7 +95,7 @@ function distanceBetweenTwoPoints(x1, z1, x2, z2) {
   /**
     * Euclidian distance between two points (x1, z1), (x2, z2)
   **/
-  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(z2 - z1, 2));
+  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(z2 - z1, 2))
 }
 
 function createGrid(bottomleft, topright, stepsize=-1) {
@@ -138,9 +138,81 @@ function shuffle(a) {
   return a
 }
 
+function ajaxDataToPlatform (formData, platform) {
+  /**
+    * Upload the formData to a platform
+  **/
+  $.ajax({
+    type: 'POST',
+    url: 'https://ul.greenpeace.international/upload',
+    processData: false,
+    contentType: false,
+    async: false,
+    cache: false,
+    data: formData,
+    success: response => {
+      let href = {
+        "facebook": `https://www.facebook.com/sharer/sharer.php?u=${response}&amp;src=sdkpreparse`,
+        "twitter": `https://twitter.com/intent/tweet?text=${response}%20Check%20out%20my%20AR%20Impact%21&source=webclient`}
+
+      console.log(response)
+      window.location.href = href[platform]
+    },
+    error: error => { console.log(error) }
+  })
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 ////                  Canvas/Camera/Scene related Stuff                     ////
 ////////////////////////////////////////////////////////////////////////////////
+
+function base64ToBlob(base64, mime) {
+  mime = mime || ''
+  let sliceSize = 1024
+  let byteChars = window.atob(base64)
+  let byteArrays = []
+
+  for (let offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+    let slice = byteChars.slice(offset, offset + sliceSize)
+
+    let byteNumbers = new Array(slice.length)
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i)
+    }
+
+    let byteArray = new Uint8Array(byteNumbers)
+    byteArrays.push(byteArray)
+  }
+
+  return new Blob(byteArrays, { type: mime })
+}
+
+function snappysnap(platform) {
+  /**
+    * save the current frame and canvas, merge them, and upload them to
+    * a platform like twitter or facebook.
+  **/
+  let frame = captureVideoFrame("video", "png")  // save camera frame
+  // save canvas object
+  let canvas = renderer.domElement // just object is needed
+
+  // resize canvas to match frame dimensions
+  canvas = resizeCanvas(canvas, frame.width, frame.height)
+  frame = frame.dataUri
+
+  // merge frame and canvas and download the resulting file
+  mergeImages([frame, canvas]).then(b64 => {
+    let base64ImageContent = b64.replace(/^data:image\/(png|jpg);base64,/, "")
+    console.log("b64: " + base64ImageContent)
+
+    let blob = base64ToBlob(base64ImageContent, 'image/png')
+    let formData = new FormData()
+    formData.append('picture', blob)
+
+    ajaxDataToPlatform(formData, platform)
+
+  })
+}
 
 // stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-404543089
 function resizeCanvas(origCanvas, width, height) {
@@ -167,13 +239,13 @@ function resizeCanvas(origCanvas, width, height) {
 
 // stolen from https://github.com/jeromeetienne/AR.js/issues/358#issuecomment-395911581
 function captureVideoFrame(video, format, width, height) {
-  if (typeof video === 'string') {
+  if (typeof video == 'string') {
     video = document.querySelector(video)
   }
 
   format = format || 'jpeg'
 
-  if (!video || (format !== 'png' && format !== 'jpeg')) {
+  if (!video || (format != 'png' && format != 'jpeg')) {
     return false
   }
 
@@ -239,7 +311,7 @@ function loadAsset(propsObject, assetDirectory, assetName, position) {
 
     console.log(assetName, typeof assetName)
     if (assetName.includes("tree")) { // tree branch of condition --------------
-      if (position === undefined) {
+      if (position == undefined) {
         spacefound = false
         let calcdx, calcdz
         while (!spacefound) {
@@ -283,7 +355,7 @@ function loadAsset(propsObject, assetDirectory, assetName, position) {
 
     } else { // island branch of condition -------------------------------------
       props.forEach( prop => {
-        if (prop !== "rotation") {
+        if (prop != "rotation") {
           object[prop].set(...propsObject[assetName][prop])
         } else {
           object.rotation.set(...Object.values(propsObject[assetName].rotation))

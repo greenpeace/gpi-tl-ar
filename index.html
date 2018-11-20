@@ -165,7 +165,9 @@
 		///////////////////////////////////////////////////////////////////////////
 		/////								  			Init																			/////
 		///////////////////////////////////////////////////////////////////////////
-		let oil, plastic, forest
+
+		/* NOTE: the 'impact' keyword contains an arry of one-argument functions
+		which are called upon answering the corresponding question */
 		let pollutionIndicators = {
 			"oil": {
 				"range": 0
@@ -179,174 +181,75 @@
 			}
 		}
 
-		initForm();  // Hide boxes and questions 2,3
+		initForm()  // Hide boxes and questions 2,3
 
-		document.body.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
-		$(".fa-twitter").click(function() {
-			snappysnap('twitter')
-		}) //
-		$(".fa-facebook").click(function() {
-			snappysnap('facebook')
-		})
-		$(".fa-envira").click(function() {
-			hideMyImpact()
-		})
-		$(".fa-shoe-prints").click(function() {
-			showMyImpact()
-		})
-		var date
-		var orbitRadius = 12
+		document.body.addEventListener('touchmove', e => { e.preventDefault() }, false)
+
+		$(".fa-twitter").click( () => { snappysnap('twitter') })  // twitter handle
+		$(".fa-facebook").click( () => { snappysnap('facebook') })  // fb handle
+		$(".fa-envira").click( () => { hideMyImpact() })  // undo human impact
+		$(".fa-shoe-prints").click( () => { showMyImpact() })  // show impact
+
+		let date
+		let orbitRadius = 12
 
 		// array of functions for the rendering loop
-		var onRenderFcts = [];
+		let onRenderFcts = []
 
 		// init scene and camera
-		var scene = new THREE.Scene();
+		let scene = new THREE.Scene()
 
-		// TODO: move to tools?
-		function base64ToBlob(base64, mime) {
-			console.log("inblobber");
-			mime = mime || '';
-			var sliceSize = 1024;
-			var byteChars = window.atob(base64);
-			var byteArrays = [];
-
-			for (var offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
-				var slice = byteChars.slice(offset, offset + sliceSize);
-
-				var byteNumbers = new Array(slice.length);
-				for (var i = 0; i < slice.length; i++) {
-					byteNumbers[i] = slice.charCodeAt(i);
-				}
-
-				var byteArray = new Uint8Array(byteNumbers);
-
-				byteArrays.push(byteArray);
-			}
-
-			return new Blob(byteArrays, {
-				type: mime
-			});
-		}
-
-		// TODO: move to tools?
-		// called by snap-button, takes a screenshot of video and canvas
-		function snappysnap(platform) {
-			// save frame from video, i.e. camera
-			let frame = captureVideoFrame("video", "png")
-			// save canvas object
-			let canvas = renderer.domElement // just object is needed
-
-			// resize canvas to match frame dimensions
-			canvas = resizeCanvas(canvas, frame.width, frame.height)
-			frame = frame.dataUri
-
-			// merge frame and canvas and download the resulting file
-			mergeImages([frame, canvas]).then(b64 => {
-				console.log("downloading screenshotty: " + b64);
-				//download(b64, "AR.png", "image/png")
-				//$("#fileholder")[0].setAttribute("value", b64);
-				console.log(b64);
-				var base64ImageContent = b64.replace(/^data:image\/(png|jpg);base64,/, "");
-				console.log("b64: " + base64ImageContent);
-				var blob = base64ToBlob(base64ImageContent, 'image/png');
-				var formData = new FormData();
-				formData.append('picture', blob);
-				//var form_data = new FormData($('#uploadForm')[0]);
-				//console.log(form_data);
-				if (platform == 'twitter') {
-					$.ajax({
-						type: 'POST',
-						url: 'https://ul.greenpeace.international/upload',
-						processData: false,
-						contentType: false,
-						async: false,
-						cache: false,
-						data: formData,
-						success: function(response) {
-							console.log(response);
-							//$("body").append('<a href="https://twitter.com/intent/tweet?text='+response+'%20Check%20out%20my%20AR%20Impact%21&source=webclient"><i class="fab fa-twitter"  data-size="large"></i></a>')
-							window.location.href = 'https://twitter.com/intent/tweet?text=' + response + '%20Check%20out%20my%20AR%20Impact%21&source=webclient';
-
-						},
-						error: function(error) {
-							console.log(error)
-						}
-					});
-				} else if (platform == 'facebook') {
-					$.ajax({
-						type: 'POST',
-						url: 'https://ul.greenpeace.international/upload',
-						processData: false,
-						contentType: false,
-						async: false,
-						cache: false,
-						data: formData,
-						success: function(response) {
-							console.log(response);
-							window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=' + response + '&amp;src=sdkpreparse';
-
-						},
-						error: function(error) {
-							console.log(error)
-						}
-					});
-				}
-
-			})
-		}
-
-		//////////////////////////////////////////////////////////////////////////////////
-		//		Initialize a basic camera + lights
-		//////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		////						Initialize a basic camera + lights 								     ////
+		///////////////////////////////////////////////////////////////////////////
 
 		// Create a camera
-		var camera = new THREE.PerspectiveCamera;
-		scene.add(camera);
+		let camera = new THREE.PerspectiveCamera
+		scene.add(camera)
 
 		// add lights to scene and dynamic camera based light
-		var ambientLight = new THREE.AmbientLight(0x212223, 8);
-		scene.add(ambientLight);
-		var pointLight = new THREE.DirectionalLight(0xffffff, 4);
+		let ambientLight = new THREE.AmbientLight(0x212223, 8)
+		scene.add(ambientLight)
+		let pointLight = new THREE.DirectionalLight(0xffffff, 4)
 		pointLight.position.set(-.5, -12, 1.5)
-		pointLight.castShadow = true;
-		scene.add(pointLight);
-		scene.add(pointLight.target);
+		pointLight.castShadow = true
+		scene.add(pointLight)
+		scene.add(pointLight.target)
 
-	  var cameraLight = new THREE.DirectionalLight(0xc4dce5, 4);
-		camera.add(cameraLight);
+	  let cameraLight = new THREE.DirectionalLight(0xc4dce5, 4)
+		camera.add(cameraLight)
 
 		// init renderer
-		var renderer = new THREE.WebGLRenderer({
+		let renderer = new THREE.WebGLRenderer({
 			antialias: true,
 			alpha: true,
 			preserveDrawingBuffer: true // needed for screenshots
-		});
+		})
 
-		renderer.setPixelRatio(4);
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		renderer.domElement.style.position = 'absolute';
-		renderer.domElement.style.top = '0px';
-		renderer.domElement.style.left = '0px';
-		renderer.shadowMapEnabled = true;
-		renderer.shadowMapSoft = true;
+		renderer.setPixelRatio(4)
+		renderer.setSize(window.innerWidth, window.innerHeight)
+		renderer.domElement.style.position = 'absolute'
+		renderer.domElement.style.top = '0px'
+		renderer.domElement.style.left = '0px'
+		renderer.shadowMapEnabled = true
+		renderer.shadowMapSoft = true
 
-		renderer.shadowCameraNear = 0.1;
-		renderer.shadowCameraFar = 9999999999999;
-		renderer.shadowCameraFov = 150;
+		renderer.shadowCameraNear = 0.1
+		renderer.shadowCameraFar = 9999999999999
+		renderer.shadowCameraFov = 150
 
-		renderer.shadowMapBias = 0.0039;
-		renderer.shadowMapDarkness = 0.2;
-		renderer.shadowMapWidth = 1024;
-		renderer.shadowMapHeight = 1024;
-		document.body.appendChild(renderer.domElement);
+		renderer.shadowMapBias = 0.0039
+		renderer.shadowMapDarkness = 0.2
+		renderer.shadowMapWidth = 1024
+		renderer.shadowMapHeight = 1024
+		document.body.appendChild(renderer.domElement)
 
 
 		////////////////////////////////////////////////////////////////////////////////
 		//          handle arToolkitSource
 		////////////////////////////////////////////////////////////////////////////////
 
-		var arToolkitSource = new THREEx.ArToolkitSource({
+		let arToolkitSource = new THREEx.ArToolkitSource({
 			// to read from the webcam
 			sourceType: 'webcam',
 			sourceWidth: 1980,
@@ -369,13 +272,13 @@
 				arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
 			}
 		}
-		////////////////////////////////////////////////////////////////////////////////
-		//          initialize arToolkitContext
-		////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		////       						initialize arToolkitContext										   ////
+		///////////////////////////////////////////////////////////////////////////
 
 
 		// create atToolkitContext
-		var arToolkitContext = new THREEx.ArToolkitContext({
+		let arToolkitContext = new THREEx.ArToolkitContext({
 			cameraParametersUrl: './assets/camera_para.dat',
 			detectionMode: 'mono',
 			maxDetectionRate: 90,
@@ -390,47 +293,45 @@
 
 		// update artoolkit on every frame
 		onRenderFcts.push(function() {
-			if (arToolkitSource.ready === false) return
+			if (arToolkitSource.ready == false) return
 			arToolkitContext.update(arToolkitSource.domElement)
 		})
 
 
-		////////////////////////////////////////////////////////////////////////////////
-		//          Create a ArMarkerControls
-		////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		////   				       Create a ArMarkerControls											   ////
+		///////////////////////////////////////////////////////////////////////////
 
-		var markerRoot = new THREE.Group()
+		let markerRoot = new THREE.Group()
 		scene.add(markerRoot)
-		var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		let artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
 			type: 'pattern',
 			patternUrl: './assets/patt.gp',
 			size: 1
 		})
 
 		// build a smoothedControls
-		var smoothedRoot = new THREE.Group()
+		let smoothedRoot = new THREE.Group()
 		scene.add(smoothedRoot)
-		var smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
+		let smoothedControls = new THREEx.ArSmoothedControls(smoothedRoot, {
 			lerpPosition: 0.25,
 			lerpQuaternion: 0.125,
 			lerpScale: 1,
 		})
-		onRenderFcts.push(function(delta) {
+		onRenderFcts.push(function(delta) {  // NOTE: what is delta needed for ?
 			smoothedControls.update(markerRoot)
 		})
-		//////////////////////////////////////////////////////////////////////////////////
-		//		add an object in the scene
-		//////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		////								add an object in the scene											   ////
+		///////////////////////////////////////////////////////////////////////////
 
-		var arWorldRoot = smoothedRoot;
+		let arWorldRoot = smoothedRoot
 		arWorldRoot.name = "arWorldRoot" // makes finding it easier
 
-		var geometry = new THREE.SphereGeometry(0.3, 32, 32);
-		var material = new THREE.MeshBasicMaterial({
-			color: 0xffff00
-		});
-		var sphere = new THREE.Mesh(geometry, material);
-		arWorldRoot.add(sphere);
+		let geometry = new THREE.SphereGeometry(0.3, 32, 32)
+		let material = new THREE.MeshBasicMaterial({ color: 0xffff00 })
+		let sphere = new THREE.Mesh(geometry, material)
+		arWorldRoot.add(sphere)
 
 		let mtlLoader = new THREE.MTLLoader()  // initiate material loader
 
@@ -462,31 +363,31 @@
 			loadAsset(trees, "./assets/trees/", typesOfTrees[randType], [x, 0.4, z])
 		}
 
-		//////////////////////////////////////////////////////////////////////////////////
-		//		render the whole thing on the page
-		//////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		////								render the whole thing on the page								 ////
+		///////////////////////////////////////////////////////////////////////////
 
 		// render the scene
 		onRenderFcts.push(function() {
-			renderer.render(scene, camera);
+			renderer.render(scene, camera)
 		})
 
 		// run the rendering loop
-		var lastTimeMsec = null
+		let lastTimeMsec = null
 		requestAnimationFrame(function animate(nowMsec) {
 			// keep looping
-			requestAnimationFrame(animate);
+			requestAnimationFrame(animate)
 			// lift or lower blinds based on whether marker is visible or not.
 			if (markerRoot.visible) {
-				$("#blinds").fadeOut(100);
-				$("#ui").fadeIn();
+				$("#blinds").fadeOut(100)
+				$("#ui").fadeIn()
 			} else {
-				$("#blinds").fadeIn();
-				$("#ui").fadeOut(100);
+				$("#blinds").fadeIn()
+				$("#ui").fadeOut(100)
 			}
 			// measure time
 			lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60
-			var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
+			let deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
 			lastTimeMsec = nowMsec
 			// call each update function
 			onRenderFcts.forEach(function(onRenderFct) {
@@ -556,17 +457,17 @@
 						//console.log(`entered default case for variable ${island}.`)
 				}
 			})
-			date = Date.now() * 0.0006;
+			date = Date.now() * 0.0006
 			pointLight.position.set(
 				Math.cos(date) * orbitRadius,
 				Math.sin(date) * orbitRadius,
 				Math.sin(date) * orbitRadius
-			);
+			)
 			sphere.position.set(
 				Math.cos(date) * orbitRadius,
 				Math.sin(date) * orbitRadius,
 				Math.sin(date) * orbitRadius
-			);
+			)
 		})
 
 		///////////////////////////////////////////////////////////////////////////
