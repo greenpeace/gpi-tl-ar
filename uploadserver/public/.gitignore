@@ -1,0 +1,5 @@
+# Ignore everything in this directory (it is needed by index.js though)
+*
+# Except this file
+!.gitignore
+
