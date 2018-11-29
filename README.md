@@ -6,4 +6,12 @@ This month we have created a demo showing how a user can use their mobile device
 [Test Site](https://greenpeace.international/ar-test/)
 
 ### uploadserver
+```
+tl-ar
+└── uploadserver
+      ├── index.js
+      ├── package.json
+      └── public [empty]
+```
 The code for the upload server can also be used as a standalone upload server. Necessary are just `index.js`, `package.json` and an empty `public` folder. Don't forget to change the paths according to your *letsencrypt* files location. 
+
