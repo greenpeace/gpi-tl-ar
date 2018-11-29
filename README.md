@@ -4,3 +4,6 @@ Techlab team have been exploring using Augmented Reality as a widely deployable 
 This month we have created a demo showing how a user can use their mobile device and a custom Greenpeace AR logo to explore the impact of their lifestyle on the environment by creating a mythical landscape that scales with their individual impact.
 
 [Test Site](https://greenpeace.international/ar-test/)
+
+### uploadserver
+The code for the upload server can also be used as a standalone upload server. Necessary are just `index.js`, `package.json` and an empty `public` folder. Don't forget to change the paths according to your *letsencrypt* files location. 
